@@ -121,6 +121,7 @@ def start(**kwargs):
       cent_labels = clab
       intermed = np.hstack([np.median(np.vstack([nearest, centroids_cur[0,:]]), axis=0), clab])
 
+
       for p in range(1, centroids_cur.shape[0]):
         clab, a, nearest = classifiers.knn_classify(centroids_ant[:,:-1], centroids_ant[:,-1], centroids_cur[p,:])
         #clab, a, nearest = classifiers.knn_scargc(centroids_ant[:,:-1], centroids_ant[:,-1], centroids_cur[p,:])
