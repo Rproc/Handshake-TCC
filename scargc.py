@@ -225,5 +225,6 @@ def main():
 
     data_acc, d_treino, l_train, data_lab, data_labels data_x, data_y, knn_labels = start_scargc(dataset, data_labeled, dataset_train, l_train, stream, l_stream, poolsize, clusters, n_features)
 
+
 if __name__ == '__main__':
 	main()
