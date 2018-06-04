@@ -1,3 +1,4 @@
+from sklearn.metrics import accuracy_score
 from functools import reduce
 import numpy as np
 import random
@@ -15,7 +16,7 @@ def criar_datasets(porcentagem_treino):
     # i_arranjo = 0
 
 
-    texto = open("datasets/1CDT.txt","r")
+    texto = open("datasets/4CE1CF.txt","r")
     linhas = texto.readlines()
     linhas = list(map(str.strip,linhas))
     n_features = len(linhas[0].split(','))
@@ -57,22 +58,6 @@ def criar_datasets(porcentagem_treino):
     # print(d_treino[0])
     # print(l_train[0])
     return dataset, data_labeled, d_treino, l_train, d_stream, l_stream, n_features
-
-def knn_classify(training_data, labels, test_instance):
-    predicted_label = nearest = None
-    best_distance = np.inf
-    tam = np.shape(training_data)[0]
-    for i in range(tam):
-        compare_data = training_data[i, :]
-
-        distance = np.sqrt(np.sum(np.power((test_instance - compare_data), 2))) #euclidean distance
-        if distance < best_distance:
-            best_distance = distance
-            predicted_label = labels[i]
-            nearest = compare_data
-    #print("nearest manually",nearest)
-    #print("predicted manually",predicted_label)
-    return predicted_label, best_distance, nearest
 
 
 def start_scargc(dataset, data_labeled, d_treino, l_train, stream, l_stream, pool_size, num_clusters, n_features):
@@ -213,18 +198,22 @@ def start_scargc(dataset, data_labeled, d_treino, l_train, stream, l_stream, poo
             # print(c[:,-1])
             pool = []
 
-return data_acc, d_treino, l_train, data_lab, data_labels data_x, data_y, knn_labels
+    return data_acc, d_treino, l_train, data_lab, data_labels, data_x, data_y, knn_labels
     # print(pool)
 
 def main():
 
     poolsize = 50
-    clusters = 2
+    clusters = 5
 
     dataset, data_labeled, dataset_train, l_train, stream, l_stream, n_features = criar_datasets(5)
 
-    data_acc, d_treino, l_train, data_lab, data_labels data_x, data_y, knn_labels = start_scargc(dataset, data_labeled, dataset_train, l_train, stream, l_stream, poolsize, clusters, n_features)
+    data_acc, d_treino, l_train, data_lab, data_labels, data_x, data_y, knn_labels = start_scargc(dataset, data_labeled, dataset_train, l_train, stream, l_stream, poolsize, clusters, n_features)
 
+
+    score = accuracy_score(l_stream, knn_labels)
+    score_quant = accuracy_score(l_stream, knn_labels, normalize=False)
+    print(score, '\n', score_quant)
 
 if __name__ == '__main__':
 	main()
