@@ -7,13 +7,16 @@ import numpy as np
 
 class utils:
 
-    def criar_datasets(porcentagem_treino):
+    def getDataset(name):
+        pass
+
+    def criar_datasets(porcentagem_treino, path):
         # d_treino = np.zeros((n_elem, n_features), dtype=np.float)
         # indices_teste = []
         # i_arranjo = 0
 
 
-        texto = open("/home/procopio/Documents/tcc/datasets/1CDT.txt","r")
+        texto = open(path,"r")
         linhas = texto.readlines()
         linhas = list(map(str.strip,linhas))
         n_features = len(linhas[0].split(','))
@@ -55,5 +58,3 @@ class utils:
         # print(d_treino[0])
         # print(l_train[0])
         return dataset, data_labeled, d_treino, l_train, d_stream, l_stream, n_features
-
-    

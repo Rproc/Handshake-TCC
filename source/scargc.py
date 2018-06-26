@@ -8,7 +8,7 @@ from sklearn.neighbors import KNeighborsClassifier
 
 
 
-def start_scargc(dataset, data_labeled, d_treino, l_train, stream, l_stream, pool_size, num_clusters, n_features):
+def scargc_1NN(dataset, data_labeled, d_treino, l_train, stream, l_stream, pool_size, num_clusters, n_features):
 
     classes = set(data_labeled)
     num_class = len(classes)
@@ -57,7 +57,8 @@ def start_scargc(dataset, data_labeled, d_treino, l_train, stream, l_stream, poo
     data_lab = []
     data_labels = []
     knn_labels = []
-    data_acc = []
+    # data_acc = []
+
 
     for i in range(0, len(stream)):
         x = stream[i,:]
@@ -76,7 +77,7 @@ def start_scargc(dataset, data_labeled, d_treino, l_train, stream, l_stream, poo
         data_labels.append(l_train)
         # Save predictions
         knn_labels.append(predicted)
-        data_acc.append(predicted)
+        # data_acc.append(predicted)
 
         # knn_labels.append(predicted)
         temp = np.column_stack((x, predicted))
@@ -84,10 +85,10 @@ def start_scargc(dataset, data_labeled, d_treino, l_train, stream, l_stream, poo
         predicted = []
         # print('temp ', temp)
 
-        if len(pool) < 1:
-            pool = temp
-        else:
+        if len(pool) > 0:
             pool = np.vstack([pool, temp])
+        else:
+            pool = temp
 
 
         if len(pool) == pool_size:
@@ -146,5 +147,7 @@ def start_scargc(dataset, data_labeled, d_treino, l_train, stream, l_stream, poo
             # print(c[:,-1])
             pool = []
 
-    return data_acc, d_treino, l_train, data_lab, data_labels, data_x, data_y, knn_labels
+
+
+    return d_treino, l_train, data_lab, data_labels, data_x, data_y, knn_labels, updt
     # print(pool)
