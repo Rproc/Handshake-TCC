@@ -2,13 +2,14 @@
 # Porcentagem treino = porcentagem de elementos rotulados
 import math
 import numpy as np
-
+import os.path
 
 
 class utils:
 
     def getDataset(name):
         pass
+
 
     def criar_datasets(porcentagem_treino, path):
         # d_treino = np.zeros((n_elem, n_features), dtype=np.float)
@@ -58,3 +59,14 @@ class utils:
         # print(d_treino[0])
         # print(l_train[0])
         return dataset, data_labeled, d_treino, l_train, d_stream, l_stream, n_features
+
+    def saveLog(name_dataset, acc_percent, score, f1, mcc):
+
+        save_path = '/home/procopio/Documents/tcc/experiments'
+        name = name_dataset + '.log'
+        completeName = os.path.join(save_path, name)
+
+        f = open(completeName, 'w')
+        ab = name_dataset + '\n'+ 'acc_percent: '+ str(acc_percent) + '\n'+ 'score: '+ str(score) + '\n'+ 'f1: '+ str(f1)+ '\n'+ 'mcc: '+ str(mcc) + '\n'
+        f.write(ab)
+        f.close()
