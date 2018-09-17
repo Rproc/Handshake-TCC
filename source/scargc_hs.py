@@ -8,7 +8,7 @@ from sklearn.neighbors import KNeighborsClassifier
 
 
 
-def scargc_1NN(dataset, data_labeled, d_treino, l_train, stream, l_stream, pool_size, num_clusters, n_features):
+def scargc_hs_1NN(dataset, data_labeled, d_treino, l_train, stream, l_stream, pool_size, num_clusters, n_features):
 
     classes = set(data_labeled)
     num_class = len(classes)
@@ -48,8 +48,6 @@ def scargc_1NN(dataset, data_labeled, d_treino, l_train, stream, l_stream, pool_
             centroid_past_lab = np.vstack([centroid_past, pred])
 
         centroid_past = np.hstack([centroid_past, centroid_past_lab])
-
-    # print(len(centroid_past))
 
     ##################################### End of Init Data ###########################
     stream = np.delete(stream, np.s_[n_features-1], axis=1)
