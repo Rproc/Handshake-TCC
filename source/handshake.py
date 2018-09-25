@@ -101,6 +101,7 @@ def handshake(dataset, data_labeled, d_treino, l_train, stream, l_stream, pool_s
         print('class kmeans', class_u, 'referencia', kmeans_lab, '\n')
         sim = 0
         trust_u = -1
+        
 
         sim = util.utils.similarity(centroid_past, class_u, kmeans_lab, x_1d)
 
