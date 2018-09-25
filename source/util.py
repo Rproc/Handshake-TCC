@@ -60,6 +60,17 @@ class utils:
         # print(l_train[0])
         return dataset, data_labeled, d_treino, l_train, d_stream, l_stream, n_features
 
+
+    def cossine_similarity(u1, u2):
+
+        try:
+            similarity = float(np.sum(u1 * u2))/( math.sqrt(np.sum(u1**2)) * math.sqrt(np.sum(u2**2)) )
+        except:
+            similarity = 0
+
+        return similarity
+
+
     def saveLog(name_dataset, acc_percent, score, f1, mcc):
 
         save_path = '/home/procopio/Documents/tcc/experiments'

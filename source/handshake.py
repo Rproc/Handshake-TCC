@@ -4,11 +4,11 @@ import math
 import time
 from sklearn.cluster import KMeans
 from sklearn.neighbors import KNeighborsClassifier
-# from source import util
+from source import util
+import sys
 
 
-
-def scargc_hs_1NN(dataset, data_labeled, d_treino, l_train, stream, l_stream, pool_size, num_clusters, n_features):
+def handshake(dataset, data_labeled, d_treino, l_train, stream, l_stream, pool_size, num_clusters, n_features, episilon):
 
     classes = set(data_labeled)
     num_class = len(classes)
@@ -20,76 +20,108 @@ def scargc_hs_1NN(dataset, data_labeled, d_treino, l_train, stream, l_stream, po
 
     # d_train = np.delete(d_treino, np.s_[n_features-1], axis=1)
 
-    if num_clusters == num_class:
-        for class_label in range(0, num_class): # labels
+    # if num_clusters == num_class:
+    #     for class_label in range(0, num_class): # labels
+    #
+    #         a = list(np.where(d_treino[:, (n_features - 1)] == list(classes)[class_label])[0])
+    #         aux = np.zeros((len(a), n_features), dtype=np.float)
+    #
+    #         i = 0
+    #         for var in range(0, len(a)):
+    #             aux[var, :] = d_treino[a[i], :]
+    #             i += 1
+    #
+    #         g = np.reshape(aux, (-1, n_features) )
+    #
+    #         aux = np.median(g, axis=0) #median will return all elements of the centroids
+    #         centroid_past.append(aux)
 
-            a = list(np.where(d_treino[:, (n_features - 1)] == list(classes)[class_label])[0])
-            aux = np.zeros((len(a), n_features), dtype=np.float)
+    # else:
+    kmeans = KMeans(n_clusters=num_clusters).fit(d_treino[:,0:-1])
+    centroid_past = kmeans.cluster_centers_
+    centroid_past = np.asarray(centroid_past)
 
-            i = 0
-            for var in range(0, len(a)):
-                aux[var, :] = d_treino[a[i], :]
-                i += 1
+    KNN = KNeighborsClassifier(n_neighbors=1)
+    KNN.fit(d_treino[:,:-1], l_train)
+    centroid_past_lab = []
+    centroid_past_lab = KNN.predict(np.reshape(centroid_past[0,:], (-1, 2)))
+    p = kmeans.predict(np.reshape(centroid_past[0,:], (-1, 2)))
+    print('knn', centroid_past_lab, 'kmeans', p)
+    for core in range(1, centroid_past.shape[0]):
+        pred = KNN.predict(np.reshape(centroid_past[core,:], (-1, 2)))
+        print ('pred', pred, 'kmeans', kmeans.predict(np.reshape(centroid_past[core,:], (-1, 2))))
+        centroid_past_lab = np.vstack([centroid_past_lab, pred])
 
-            g = np.reshape(aux, (-1, n_features) )
-
-            aux = np.median(g, axis=0) #median will return all elements of the centroids
-            centroid_past.append(aux)
-
-    else:
-        centroid_past = KMeans(n_clusters=num_clusters).fit(d_treino[:,0:-1])
-        KNN = KNeighborsClassifier(n_neighbors=1)
-        KNN.fit(d_treino, l_train)
-        centroid_past_lab = []
-        centroid_past_lab = KNN.predict(centroid_past[0,:])
-
-        for core in range(1, centroids_past.shape[0]):
-            pred = KNN.predict(centroid_past[core,:])
-            centroid_past_lab = np.vstack([centroid_past, pred])
-
-        centroid_past = np.hstack([centroid_past, centroid_past_lab])
+    centroid_past = np.hstack([centroid_past, centroid_past_lab])
 
     ##################################### End of Init Data ###########################
     stream = np.delete(stream, np.s_[n_features-1], axis=1)
     d_treino = np.delete(d_treino, np.s_[n_features-1], axis=1)
 
-    # print(stream)
-    # print(l_stream)
     pool = []
     updt = 0
 
     data_x = []
-    data_y = []
+    data_ys = []
+    data_yu = []
     data_lab = []
     data_labels = []
     knn_labels = []
-    # data_acc = []
 
+
+
+    # print(arr)
+    print(centroid_past[:, :])
 
     for i in range(0, len(stream)):
         x = stream[i,:]
         y = l_stream[i]
 
+        x_1d = x
         KNN = KNeighborsClassifier(n_neighbors=1)
         KNN.fit(d_treino, l_train)
 
         x = np.reshape(x, (-1, 2))
-        predicted = KNN.predict(x)
 
+        predicted = KNN.predict(x)
+        index_s = (int(predicted) - 1)
+        trust = KNN.predict_proba(x)
+        trust_s = int(trust[:, index_s])
+
+        pred_u = kmeans.predict(x)
+        print('pred_u', pred_u)
+        class_u = int(pred_u)
+        sim = -1
+        trust_u = -1
+
+        print('c_u', class_u)
+
+        for k in range(0, centroid_past.shape[0]):
+            print('hey')
+            if int(centroid_past[k, -1]) == class_u:
+                sim = util.utils.cossine_similarity(x_1d, centroid_past[k,:-1])
+                print('k = ', k, 'sim = ', sim)
+            if sim > trust_u:
+                trust_u = sim
+
+
+        print('trust_s = ', trust_s, 'trust_u', trust_u)
+
+        delta = trust_s - trust_u
+
+        sys.exit(0)
         # Save stream data
-        data_x.append(x)
-        data_y.append(y)
+        data_x.append(x_1d)
+        data_ys.append(y)
         data_lab.append(d_treino)
         data_labels.append(l_train)
         # Save predictions
         knn_labels.append(predicted)
         # data_acc.append(predicted)
 
-        # knn_labels.append(predicted)
         temp = np.column_stack((x, predicted))
 
         predicted = []
-        # print('temp ', temp)
 
         if len(pool) > 0:
             pool = np.vstack([pool, temp])
@@ -97,7 +129,7 @@ def scargc_hs_1NN(dataset, data_labeled, d_treino, l_train, stream, l_stream, po
             pool = temp
 
 
-        if len(pool) == pool_size:
+        if len(pool) == pool_size or delta > episilon:
 
             centroid_past = np.asarray(centroid_past)
             # c_old = np.delete(centroid_past, np.s_[n_features - 1], axis=1)

@@ -37,26 +37,27 @@ def scargc_1NN(dataset, data_labeled, d_treino, l_train, stream, l_stream, pool_
             centroid_past.append(aux)
 
     else:
-        centroid_past = KMeans(n_clusters=num_clusters).fit(d_treino[:,0:-1])
-        KNN = KNeighborsClassifier(n_neighbors=1)
-        KNN.fit(d_treino, l_train)
-        centroid_past_lab = []
-        centroid_past_lab = KNN.predict(centroid_past[0,:])
+        k = KMeans(n_clusters=num_clusters).fit(d_treino[:,0:-1])
+        centroid_past = k.cluster_centers_
+        centroid_past = np.asarray(centroid_past)
 
-        for core in range(1, centroids_past.shape[0]):
-            pred = KNN.predict(centroid_past[core,:])
-            centroid_past_lab = np.vstack([centroid_past, pred])
+        KNN = KNeighborsClassifier(n_neighbors=1)
+        KNN.fit(d_treino[:,:-1], l_train)
+        centroid_past_lab = []
+        centroid_past_lab = KNN.predict(np.reshape(centroid_past[0,:], (-1, 2)))
+
+        for core in range(1, centroid_past.shape[0]):
+            pred = KNN.predict(np.reshape(centroid_past[core,:], (-1, 2)))
+            centroid_past_lab = np.vstack([centroid_past_lab, pred])
 
         centroid_past = np.hstack([centroid_past, centroid_past_lab])
 
-    # print(len(centroid_past))
 
     ##################################### End of Init Data ###########################
     stream = np.delete(stream, np.s_[n_features-1], axis=1)
     d_treino = np.delete(d_treino, np.s_[n_features-1], axis=1)
 
-    # print(stream)
-    # print(l_stream)
+
     pool = []
     updt = 0
 
