@@ -70,6 +70,41 @@ class utils:
 
         return similarity
 
+    def similarity(centroid_past, class_u, kmeans_lab, x):
+
+        sim = 0
+        trust_u = -1
+        for k in range(0, centroid_past.shape[0]):
+            if int(centroid_past[k, -1]) == kmeans_lab[class_u]:
+                sim = utils.cossine_similarity(x, centroid_past[k,:-1])
+            if sim > trust_u:
+                trust_u = sim
+
+        return trust_u
+
+
+    def dist_centroid(centroid_past, class_u, kmeans_lab, x):
+
+        dist_y = 99999999
+        dist_not_y = 99999999
+        dist = 0
+        for k in range(0, centroid_past.shape[0]):
+            if int(centroid_past[k, -1]) == kmeans_lab[class_u]:
+                dist = utils.dist_euc(x, centroid_past[k,:-1])
+                if dist < dist_y:
+                    dist_y = dist
+            else:
+                dist = utils.dist_euc(x, centroid_past[k,:-1])
+                if dist < dist_not_y:
+                    dist_not_y = dist
+
+        dist_euc = 1 - (dist_y/(dist_y + dist_not_y) )
+
+        return dist_euc
+
+    def dist_euc(u1,u2):
+        return math.sqrt(np.sum(pow(u1-u2,2)))
+
 
     def saveLog(name_dataset, acc_percent, score, f1, mcc):
 

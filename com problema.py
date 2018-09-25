@@ -86,8 +86,8 @@ def handshake(dataset, data_labeled, d_treino, l_train, stream, l_stream, pool_s
         x = np.reshape(x, (-1, 2))
 
         predicted = KNN.predict(x)
-        # if b == 1:
-        #     print(predicted)
+        if b == 1:
+            print(predicted)
         index_s = (int(predicted) - 1)
         # print(index_s)
         trust = KNN.predict_proba(x)
@@ -97,18 +97,17 @@ def handshake(dataset, data_labeled, d_treino, l_train, stream, l_stream, pool_s
 
         pred_u = kmeans.predict(x)
         class_u = int(pred_u)
-
-        print('class kmeans', class_u, 'referencia', kmeans_lab, '\n')
-        sim = 0
+        sim = -1
         trust_u = -1
 
-        sim = util.utils.similarity(centroid_past, class_u, kmeans_lab, x_1d)
-
-        trust_u = util.utils.dist_centroid(centroid_past, class_u, kmeans_lab, x_1d)
-
+        for k in range(0, centroid_past.shape[0]):
+            if int(centroid_past[k, -1]) == kmeans_lab[class_u]:
+                sim = util.utils.cossine_similarity(x_1d, centroid_past[k,:-1])
+            if sim > trust_u:
+                trust_u = sim
 
         print(i)
-        print('pred_u', kmeans_lab[class_u], 'trust_u', trust_u, 'sim', sim)
+        print('pred_u', kmeans_lab[class_u], 'trust_u', trust_u)
         print('pred_s', int(predicted), 'trust_s', trust_s)
 
         delta = abs(trust_s - trust_u)
@@ -178,9 +177,7 @@ def handshake(dataset, data_labeled, d_treino, l_train, stream, l_stream, pool_s
             print('pool', new_pool[:,-1])
             print('pool', l_stream[:21])
 
-            # print('\npoolsize)
-
-            if len(concordant_labels)/pool.shape[0] < 1 or len(data_ys) < pool.shape[0]:
+            if len(concordant_labels)/pool_size < 1 or len(data_y) < pool.shape[0]:
                 pool[:,-1] = new_pool[:, -1]
                 centroid_past = np.vstack([centroid_cur, intermed])
                 d_treino = pool[:, 0:-1]
@@ -192,7 +189,7 @@ def handshake(dataset, data_labeled, d_treino, l_train, stream, l_stream, pool_s
             # print(c[:,:-1])
             # print(c[:,-1])
             # print(l_train)
-            print(concordant_labels)
+            # print(concordant_labels)
             print('updt', updt)
             b += 1
             pool = []
