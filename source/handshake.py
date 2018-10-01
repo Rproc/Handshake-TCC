@@ -63,8 +63,6 @@ def handshake(dataset, data_labeled, d_treino, l_train, stream, l_stream, pool_s
     stream = np.delete(stream, np.s_[n_features-1], axis=1)
     d_treino = np.delete(d_treino, np.s_[n_features-1], axis=1)
 
-    # print('kmeans_lab', kmeans_lab)
-
     pool = []
     updt = 0
     b = 0
@@ -86,36 +84,26 @@ def handshake(dataset, data_labeled, d_treino, l_train, stream, l_stream, pool_s
         x = np.reshape(x, (-1, 2))
 
         predicted = KNN.predict(x)
-        # if b == 1:
-        #     print(predicted)
         index_s = (int(predicted) - 1)
-        # print(index_s)
         trust = KNN.predict_proba(x)
-
-        # print(trust)
         trust_s = int(trust[:, index_s])
 
         pred_u = kmeans.predict(x)
         class_u = int(pred_u)
-
-        print('class kmeans', class_u, 'referencia', kmeans_lab, '\n')
         sim = 0
         trust_u = -1
-        
 
         sim = util.utils.similarity(centroid_past, class_u, kmeans_lab, x_1d)
-
         trust_u = util.utils.dist_centroid(centroid_past, class_u, kmeans_lab, x_1d)
 
-
-        print(i)
-        print('pred_u', kmeans_lab[class_u], 'trust_u', trust_u, 'sim', sim)
-        print('pred_s', int(predicted), 'trust_s', trust_s)
+        # print(i)
+        # print('pred_u', kmeans_lab[class_u], 'trust_u', trust_u, 'sim', sim)
+        # print('pred_s', int(predicted), 'trust_s', trust_s)
 
         delta = abs(trust_s - trust_u)
 
-        print('delta', delta)
-        print('\n')
+        # print('delta', delta)
+        # print('\n')
         # Save stream data
         data_x.append(x_1d)
         data_ys.append(y)
@@ -142,6 +130,8 @@ def handshake(dataset, data_labeled, d_treino, l_train, stream, l_stream, pool_s
             kmeans = KMeans(n_clusters=num_clusters, init=centroid_past[-num_clusters:, :-1]).fit(pool[:,0:-1])
             centroid_cur = kmeans.cluster_centers_
 
+            print('centroid past ', centroid_past)
+
             KNN.fit(centroid_past[:,:-1], centroid_past[:,-1])
             clab = KNN.predict(centroid_cur)
             nearest = KNN.kneighbors(centroid_cur, return_distance=False)
@@ -163,6 +153,8 @@ def handshake(dataset, data_labeled, d_treino, l_train, stream, l_stream, pool_s
             centroid_cur = np.column_stack([centroid_cur, centroid_label])
             centroid_past = intermed
 
+            print('centroid current ', centroid_cur , '\n')
+
             KNN.fit( np.vstack([centroid_cur[:,:-1], centroid_past[:,:-1]]), np.hstack([centroid_cur[:,-1], centroid_past[:,-1]]) )
             pred_all = KNN.predict(pool[:,0:-1])
 
@@ -176,8 +168,8 @@ def handshake(dataset, data_labeled, d_treino, l_train, stream, l_stream, pool_s
             concordant_labels = np.nonzero(pool[:,-1] == new_pool[:,-1])[0]
 
             print('pool', pool[:,-1])
-            print('pool', new_pool[:,-1])
-            print('pool', l_stream[:21])
+            print('pool', new_pool[:,-1], '\n\n')
+            # print('pool', l_stream[:21])
 
             # print('\npoolsize)
 
@@ -195,6 +187,8 @@ def handshake(dataset, data_labeled, d_treino, l_train, stream, l_stream, pool_s
             # print(l_train)
             print(concordant_labels)
             print('updt', updt)
+
+            # sys.exit(0)
             b += 1
             pool = []
 
