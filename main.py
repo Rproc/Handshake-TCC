@@ -9,6 +9,8 @@ def main():
     clusters = 2
     n_components = 2
     episilon = 0.34
+    n_features = 2
+
 
     # adr = '/home/procopio/Documents/tcc/datasets/2CDT.txt'
     adr = '/home/god/Documents/ccomp/tcc/datasets/2CDT.txt'

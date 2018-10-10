@@ -17,35 +17,71 @@ def handshake2(dataset, data_labeled, d_treino, l_train, stream, l_stream, num_c
 
     gmm = GaussianMixture(n_components=num_components).fit(d_treino)
 
+    KNN = KNeighborsClassifier(n_neighbors=1)
+    KNN.fit(d_treino, l_train)
+
     pred = gmm.predict(np.reshape(d_treino[0,:], (-1, 2)))
+    # print(pred_s)
     cl = int(pred)
     pred_proba = gmm.predict_proba(np.reshape(d_treino[0,:], (-1, 2)))
-    aux = np.hstack([d_treino[0, :], pred, pred_proba[0][cl]] )
+    aux = np.hstack([d_treino[0, :], pred, pred_proba[0][cl], l_train[0]] )
 
     inicial_pool = aux
-    print(aux)
-
+    # print(aux)
 
     for i in range(1, len(d_treino)):
 
-        pred = gmm.predict(d_treino[i, :])
+        pred = gmm.predict(np.reshape(d_treino[i,:], (-1, 2)))
         cl = int(pred)
         pred_proba = gmm.predict_proba(np.reshape(d_treino[i,:], (-1, 2)))
-        aux = np.hstack([d_treino[i, :], pred, pred_proba[0][cl]] )
+        aux = np.hstack([d_treino[i, :], pred, pred_proba[0][cl], l_train[i]] )
 
         inicial_pool = np.vstack([inicial_pool, aux])
 
 
     # FILTER
 
+    # for i in range(0, len(inicial_pool)):
 
+    inicial_pool = inicial_pool[inicial_pool[:,3].argsort()[::-1]]
+    pool = inicial_pool[:, :-2]
+    labels = inicial_pool[:, -1]
+    data_labeled = []
+    poolsize = len(inicial_pool)
+    count = 0
+
+    # sys.exit(0)
     for i in range(0, len(stream)):
 
-        x = stream[i,:]
+        x = stream[i,:-1]
         y = l_stream[i]
 
-        x_1d = x
-        KNN = KNeighborsClassifier(n_neighbors=1)
-        KNN.fit(d_treino, l_train)
-
         x = np.reshape(x, (-1, 2))
+
+        predicted = KNN.predict(x)
+        index_s = (int(predicted) - 1)
+        trust = KNN.predict_proba(x)
+        trust_s = int(trust[:, index_s])
+
+        pred = gmm.predict(x)
+        cl = int(pred)
+        pred_proba = gmm.predict_proba(np.reshape(x, (-1, 2)))
+        trust_u = pred_proba[0][cl]
+
+        delta = abs(trust_u - trust_s)
+
+        temp = np.column_stack((x, predicted))
+
+        # print(temp)
+
+        if len(pool) > 0:
+            pool = np.vstack([pool, temp])
+        else:
+            pool = temp
+
+        count += 1
+        # sys.exit(0)
+        if delta > episilon:
+
+            gmm = GaussianMixture(n_components=num_components).fit(pool)
+            pred_all = gmm.predict(pool[:, n_features])

@@ -115,6 +115,9 @@ def handshake(dataset, data_labeled, d_treino, l_train, stream, l_stream, pool_s
 
         temp = np.column_stack((x, predicted))
 
+        print('hs', temp)
+
+        sys.exit(0)
         predicted = []
 
         if len(pool) > 0:
