@@ -44,11 +44,21 @@ def handshake2(dataset, data_labeled, d_treino, l_train, stream, l_stream, num_c
     # for i in range(0, len(inicial_pool)):
 
     inicial_pool = inicial_pool[inicial_pool[:,3].argsort()[::-1]]
-    pool = inicial_pool[:, :-2]
+    inicial_pool = inicial_pool[0:80]
+    pool = []#inicial_pool[:, :-3]
     labels = inicial_pool[:, -1]
+
+    for i in range(0, len(inicial_pool)):
+        pool.append(np.hstack([inicial_pool[i, :-3], labels[i]]) )
+
+    pool = np.asarray(pool)
+
+    # print(pool)
+
     data_labeled = []
     poolsize = len(inicial_pool)
     count = 0
+    print(poolsize)
 
     # sys.exit(0)
     for i in range(0, len(stream)):
@@ -83,5 +93,12 @@ def handshake2(dataset, data_labeled, d_treino, l_train, stream, l_stream, num_c
         # sys.exit(0)
         if delta > episilon:
 
-            gmm = GaussianMixture(n_components=num_components).fit(pool)
-            pred_all = gmm.predict(pool[:, n_features])
+            gmm = GaussianMixture(n_components=num_components).fit(pool[:,:-1])
+            pred_all = gmm.predict(pool[:, 0:(n_features -1 )])
+
+            new_labels = pred_all[0:len(inicial_pool)]
+
+            concordant_labels = np.nonzero(inicial_pool[:,-3] == new_labels[:])[0]
+
+            print(concordant_labels)
+            sys.exit(0)

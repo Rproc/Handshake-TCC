@@ -8,14 +8,14 @@ def main():
     poolsize = 50
     clusters = 2
     n_components = 2
-    episilon = 0.34
+    episilon = 0.2
     n_features = 2
 
 
     # adr = '/home/procopio/Documents/tcc/datasets/2CDT.txt'
-    adr = '/home/god/Documents/ccomp/tcc/datasets/2CDT.txt'
+    # adr = '/home/god/Documents/ccomp/tcc/datasets/2CDT.txt'
 
-    # adr = '/home/localuser/Documentos/procopio/tcc/datasets/2CDT.txt'
+    adr = '/home/localuser/Documentos/procopio/tcc/datasets/2CDT.txt'
     dataset, data_labeled, dataset_train, l_train, stream, l_stream, n_features = u.utils.criar_datasets(5, adr)
 
     # d_treino, l_train, data_lab, data_labels, data_x, data_y, predicted, updt = scargc.scargc_1NN(dataset, data_labeled, dataset_train, l_train, stream, l_stream, poolsize, clusters, n_features)
