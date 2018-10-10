@@ -103,7 +103,7 @@ def handshake2(dataset, data_labeled, d_treino, l_train, stream, l_stream, num_c
 
         concordant_labels = np.nonzero(inicial_pool[:,-3] == new_labels[:] )[0]
 
-        # if len(concordant_labels)/poolsize < 1:
+        #  if len(concordant_labels)/poolsize < 1:
         KNN.fit(pool[:, 0:(n_features - 1)], pool[:, -1])
 
         pred_proba_all = gmm.predict_proba(pool[:, :(n_features - 1)])
