@@ -41,10 +41,6 @@ def handshake2(dataset, data_labeled, d_treino, l_train, stream, l_stream, num_c
 
     # FILTER
 
-    # for i in range(0, len(inicial_pool)):
-
-    # print(inicial_pool[0])
-
     inicial_pool = inicial_pool[inicial_pool[:,3].argsort()[::-1]]
     inicial_pool = inicial_pool[0:80]
     pool = []#inicial_pool[:, :-3]
@@ -87,6 +83,7 @@ def handshake2(dataset, data_labeled, d_treino, l_train, stream, l_stream, num_c
         temp = np.column_stack((x, predicted))
 
         # print(temp)
+        data_labeled.append(predicted)
 
         pool = np.vstack([pool, temp])
 
@@ -94,7 +91,7 @@ def handshake2(dataset, data_labeled, d_treino, l_train, stream, l_stream, num_c
 
         count += 1
         # sys.exit(0)
-        if delta > episilon:
+        if delta >= episilon:
 
             gmm = GaussianMixture(n_components=num_components).fit(pool[:,:-1])
             pred_all = gmm.predict(pool[:, 0:(n_features - 1)])
@@ -104,7 +101,7 @@ def handshake2(dataset, data_labeled, d_treino, l_train, stream, l_stream, num_c
 
             concordant_labels = np.nonzero(inicial_pool[:,-3] == new_labels[:] )[0]
 
-            print('cl', len(concordant_labels))
+            # print('cl', len(concordant_labels))
 
             if len(concordant_labels)/poolsize < 1:
 
@@ -122,7 +119,7 @@ def handshake2(dataset, data_labeled, d_treino, l_train, stream, l_stream, num_c
                     aux = np.hstack( [pool[k, 0:(n_features -1 )], cl, pred_proba_all[k][cl], pool[k, -1]] )
                     new_pool = np.vstack([new_pool, aux])
 
-                print('np', len(new_pool))
+                # print('np', len(new_pool))
                 new_pool = new_pool[new_pool[:,3].argsort()[::-1]]
                 inicial_pool = new_pool[0:80]
                 pool = []
@@ -135,8 +132,4 @@ def handshake2(dataset, data_labeled, d_treino, l_train, stream, l_stream, num_c
 
                 updt+= 1
 
-        sys.exit(0)
-        b+=1
-
-        if(b == 1):
-            sys.exit(0)
+    return data_labeled, updt
