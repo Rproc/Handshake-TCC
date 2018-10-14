@@ -43,7 +43,7 @@ def handshake2(dataset, data_labeled, d_treino, l_train, stream, l_stream, num_c
 
     # for i in range(0, len(inicial_pool)):
 
-    print(inicial_pool[0])
+    # print(inicial_pool[0])
 
     inicial_pool = inicial_pool[inicial_pool[:,3].argsort()[::-1]]
     inicial_pool = inicial_pool[0:80]
@@ -60,7 +60,8 @@ def handshake2(dataset, data_labeled, d_treino, l_train, stream, l_stream, num_c
     data_labeled = []
     poolsize = len(inicial_pool)
     count = 0
-    print(poolsize)
+    updt = 0
+    # print(poolsize)
     b = 0
 
     # sys.exit(0)
@@ -93,32 +94,47 @@ def handshake2(dataset, data_labeled, d_treino, l_train, stream, l_stream, num_c
 
         count += 1
         # sys.exit(0)
-        # if delta > episilon:
+        if delta > episilon:
 
-        gmm = GaussianMixture(n_components=num_components).fit(pool[:,:-1])
-        pred_all = gmm.predict(pool[:, 0:(n_features - 1)])
+            gmm = GaussianMixture(n_components=num_components).fit(pool[:,:-1])
+            pred_all = gmm.predict(pool[:, 0:(n_features - 1)])
 
-        init_pool = np.asarray(inicial_pool[:, -3], dtype=int)
-        new_labels = pred_all[0:len(inicial_pool)]
+            init_pool = np.asarray(inicial_pool[:, -3], dtype=int)
+            new_labels = pred_all[0:len(inicial_pool)]
 
-        concordant_labels = np.nonzero(inicial_pool[:,-3] == new_labels[:] )[0]
+            concordant_labels = np.nonzero(inicial_pool[:,-3] == new_labels[:] )[0]
 
-        #  if len(concordant_labels)/poolsize < 1:
-        KNN.fit(pool[:, 0:(n_features - 1)], pool[:, -1])
+            print('cl', len(concordant_labels))
 
-        pred_proba_all = gmm.predict_proba(pool[:, :(n_features - 1)])
+            if len(concordant_labels)/poolsize < 1:
 
-        new_pool = []
-        cl = int(pred_all[0])
-        print(pred_proba_all[0][cl])
-        aux = np.hstack( [pool[0, 0:(n_features -1 )], cl, pred_proba_all[0][cl], pool[0, -1]] )
-        new_pool = aux
-        for k in range(1, len(pool)):
-            cl = int(pred_all[k])
-            aux = np.hstack( [pool[k, 0:(n_features -1 )], cl, pred_proba_all[k][cl], pool[k, -1]] )
-            new_pool = np.vstack([new_pool, aux])
+                KNN.fit(pool[:, 0:(n_features - 1)], pool[:, -1])
+                pred_proba_all = gmm.predict_proba(pool[:, :(n_features - 1)])
 
-        print(new_pool)
+                new_pool = []
+
+                cl = int(pred_all[0])
+                aux = np.hstack( [pool[0, 0:(n_features -1 )], cl, pred_proba_all[0][cl], pool[0, -1]] )
+                new_pool = aux
+
+                for k in range(1, len(pool)):
+                    cl = int(pred_all[k])
+                    aux = np.hstack( [pool[k, 0:(n_features -1 )], cl, pred_proba_all[k][cl], pool[k, -1]] )
+                    new_pool = np.vstack([new_pool, aux])
+
+                print('np', len(new_pool))
+                new_pool = new_pool[new_pool[:,3].argsort()[::-1]]
+                inicial_pool = new_pool[0:80]
+                pool = []
+                labels = inicial_pool[:, -1]
+
+                for i in range(0, len(inicial_pool)):
+                    pool.append(np.hstack([inicial_pool[i, :-3], labels[i]]) )
+
+                pool = np.asarray(pool)
+
+                updt+= 1
+
         sys.exit(0)
         b+=1
 
