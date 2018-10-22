@@ -8,7 +8,7 @@ import os.path
 class utils:
 
     def getDataset(name):
-        pass
+        print('oi')
 
 
     def criar_datasets(porcentagem_treino, path):
@@ -108,11 +108,22 @@ class utils:
 
     def saveLog(name_dataset, acc_percent, score, f1, mcc):
 
-        save_path = '/home/procopio/Documents/tcc/experiments'
+        save_path = '/home/localuser/Documentos/procopio/tcc/experiments'
         name = name_dataset + '.log'
         completeName = os.path.join(save_path, name)
 
         f = open(completeName, 'w')
         ab = name_dataset + '\n'+ 'acc_percent: '+ str(acc_percent) + '\n'+ 'score: '+ str(score) + '\n'+ 'f1: '+ str(f1)+ '\n'+ 'mcc: '+ str(mcc) + '\n'
+        f.write(ab)
+        f.close()
+
+    def saveLog2(name_dataset, ep, percent, updt, acc_percent, score, f1, mcc):
+
+        save_path = '/home/localuser/Documentos/procopio/tcc/experiments'
+        name = name_dataset + '.log'
+        completeName = os.path.join(save_path, name)
+
+        f = open(completeName, 'a')
+        ab = name_dataset + '\n' 'ep: ' + str(ep) + ' percent_pool: ' + str(percent) + ' number of updts: ' + str(updt) + '\nacc_percent: '+ str(acc_percent) + '\n'+ 'score: '+ str(score) + '\n'+ 'f1: '+ str(f1)+ '\n'+ 'mcc: '+ str(mcc) + '\n'
         f.write(ab)
         f.close()

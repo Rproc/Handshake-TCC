@@ -4,7 +4,7 @@ import math
 import time
 from sklearn.cluster import KMeans
 from sklearn.neighbors import KNeighborsClassifier
-from source import util
+from source.util import utils
 import sys
 
 
@@ -93,8 +93,8 @@ def handshake(dataset, data_labeled, d_treino, l_train, stream, l_stream, pool_s
         sim = 0
         trust_u = -1
 
-        sim = util.utils.similarity(centroid_past, class_u, kmeans_lab, x_1d)
-        trust_u = util.utils.dist_centroid(centroid_past, class_u, kmeans_lab, x_1d)
+        sim = utils.similarity(centroid_past, class_u, kmeans_lab, x_1d)
+        trust_u = utils.dist_centroid(centroid_past, class_u, kmeans_lab, x_1d)
 
         # print(i)
         # print('pred_u', kmeans_lab[class_u], 'trust_u', trust_u, 'sim', sim)
