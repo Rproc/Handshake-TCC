@@ -106,14 +106,14 @@ class utils:
         return math.sqrt(np.sum(pow(u1-u2,2)))
 
 
-    def saveLog(name_dataset, acc_percent, score, f1, mcc):
+    def saveLog(name_dataset, acc_percent, score, f1, mcc, updt):
 
         save_path = '/home/localuser/Documentos/procopio/tcc/experiments'
-        name = name_dataset + '.log'
+        name = name_dataset + '_SCARGC' + '.log'
         completeName = os.path.join(save_path, name)
 
         f = open(completeName, 'w')
-        ab = name_dataset + '\n'+ 'acc_percent: '+ str(acc_percent) + '\n'+ 'score: '+ str(score) + '\n'+ 'f1: '+ str(f1)+ '\n'+ 'mcc: '+ str(mcc) + '\n'
+        ab = name_dataset + '\nnumber of updates: ' + str(updt) + '\n'+ 'acc_percent: '+ str(acc_percent) + '\n'+ 'score: '+ str(score) + '\n'+ 'f1: '+ str(f1)+ '\n'+ 'mcc: '+ str(mcc) + '\n'
         f.write(ab)
         f.close()
 
