@@ -16,7 +16,6 @@ def handshake2(dataset, data_labeled, d_treino, l_train, stream, l_stream, num_c
 
     percent_pool = int( len(d_treino)/100 * percent_init )
 
-
     gmm = GaussianMixture(n_components=num_components).fit(d_treino)
 
     KNN = KNeighborsClassifier(n_neighbors=1)
@@ -89,7 +88,7 @@ def handshake2(dataset, data_labeled, d_treino, l_train, stream, l_stream, num_c
         pool = np.vstack([pool, temp])
 
         count += 1
-        
+
         if delta >= episilon:
             gmm = GaussianMixture(n_components=num_components).fit(pool[:,:-1])
             pred_all = gmm.predict(pool[:, 0:(n_features - 1)])
