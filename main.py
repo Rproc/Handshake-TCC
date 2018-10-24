@@ -11,16 +11,17 @@ def main():
     n_components = 2
     episilon = 0.15
     n_features = 2
-    base = '/home/localuser/Documentos/procopio/tcc/datasets/'
+    # base = '/home/localuser/Documentos/procopio/tcc/datasets/'
     # base = '/home/procopio/Documents/tcc/datasets/'
-    # base = '/home/god/Documents/ccomp/tcc/datasets/'
+    base = '/home/god/Documents/ccomp/tcc/datasets/'
     list = ['1CDT.txt', '1CHT.txt', '1CSurr.txt', '2CDT.txt', '2CHT.txt']
     database = {}
 
     for i in range(0, len(list)):
         database[i] = base + list[i]
 
-    array_ep = [0.15, 0.20, 0.25]
+    array_ep = [0.05, 0.10, 0.15]
+    # array_ep = [0.15, 0.20, 0.25]
     array_p = [10, 20, 30]
 
     for key, value in database.items():
@@ -35,7 +36,7 @@ def main():
 
                 acc_percent = metrics.makeBatches(l_stream, predicted, len(stream))
                 score, f1, mcc = metrics.metrics(l_stream, predicted)
-                name = list[int(key)] + 'wBalance'
+                name = list[int(key)] + 'wBalanceEpChanged'
                 u.saveLog2(name, array_ep[ep], array_p[p], updt, acc_percent, score, f1, mcc)
                 # u.saveLog(list[int(key)], acc_percent, score, f1, mcc, updt)
                 print(key, 'episilon: ', ep, 'percentage: ', p)

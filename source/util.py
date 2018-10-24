@@ -119,7 +119,7 @@ class utils:
 
     def saveLog2(name_dataset, ep, percent, updt, acc_percent, score, f1, mcc):
 
-        save_path = '/home/localuser/Documentos/procopio/tcc/experiments'
+        save_path = '/home/god/Documents/ccomp/tcc/experiments'
         name = name_dataset + '.log'
         completeName = os.path.join(save_path, name)
 
