@@ -4,6 +4,9 @@ from source import metrics
 from source import handshake, handshake2, scargc, handshake_kde
 import sys
 import time
+import os
+import psutil
+import resource
 
 def main():
 
@@ -41,11 +44,13 @@ def main():
                 # predicted, updt = handshake_kde.handshake_kde(dataset, data_labeled, dataset_train, l_train, stream, l_stream, n_features, band, array_ep[ep], array_p[p])
                 predicted, updt = handshake2.handshake2(dataset, data_labeled, dataset_train, l_train, stream, l_stream, n_components, n_features, array_ep[ep], array_p[p])
                 end = time.time()
+                mem = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+                print('mem', mem)
                 tempo = end - start
                 acc_percent = metrics.makeBatches(l_stream, predicted, len(stream))
-                score, f1, mcc = metrics.metrics(l_stream, predicted)
+                score, f1, mcc = metrics.metrics(acc_percent, l_stream, predicted)
                 name = list[int(key)]
-                u.saveLog2(name, array_ep[ep], array_p[p], updt, acc_percent, score, f1, mcc, tempo)
+                u.saveLog2(name, array_ep[ep], array_p[p], updt, acc_percent, score, f1, mcc, tempo, mem)
                 # u.saveLog(list[int(key)], acc_percent, score, f1, mcc, updt)
                 print(key, 'episilon: ', ep, 'percentage: ', p)
 

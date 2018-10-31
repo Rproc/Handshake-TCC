@@ -117,14 +117,14 @@ class utils:
         f.write(ab)
         f.close()
 
-    def saveLog2(name_dataset, ep, percent, updt, acc_percent, score, f1, mcc, time):
+    def saveLog2(name_dataset, ep, percent, updt, acc_percent, score, f1, mcc, time, mem):
 
-        save_path = '/home/localuser/Documentos/procopio/tcc/experiments/withTime'
+        save_path = '/home/localuser/Documentos/procopio/tcc/experiments/KNN3'
         name = name_dataset + '.log'
         completeName = os.path.join(save_path, name)
 
         f = open(completeName, 'a')
-        ab = name_dataset + '\n' + 'Executed in: ' + str(time) + ' seconds\n' + 'ep: ' + str(ep) + ' percent_pool: ' + str(percent) + ' number of updts: ' + str(updt) + '\nacc_percent: '+ str(acc_percent) + '\n'+ 'score: '+ str(score) + '\nf1: '+ str(f1)+ '\n'+ 'mcc: '+ str(mcc) + '\n\n'
+        ab = name_dataset + '\n' + 'Executed in: ' + str(time) + ' seconds\n' + 'ep: ' + str(ep) + ' percent_pool: ' + str(percent) + ' number of updts: ' + str(updt) + '\nacc_percent: '+ str(acc_percent) + '\n'+ 'score: '+ str(score) + '\nf1: '+ str(f1) + '\n'+ 'mcc: ' + str(mcc) + '\nMemory peak: ' + str(mem) + '\n\n'
         f.write(ab)
         f.close()
 
