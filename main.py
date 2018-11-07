@@ -1,7 +1,7 @@
 # from source import scargc
 from source.util import utils as u
 from source import metrics
-from source import handshake, handshake2, scargc, handshake_kde
+from source import handshake, handshake2, scargc, hs
 import sys
 import time
 import os
@@ -21,7 +21,7 @@ def main():
     # base = '/home/procopio/Documents/tcc/datasets/'
     # base = '/home/god/Documents/ccomp/tcc/datasets/'
     # list = ['1CDT.txt', '1CHT.txt', '1CSurr.txt', '2CDT.txt', '2CHT.txt']
-    list = ['elec.txt']
+    list = ['keystroke.txt']
     database = {}
 
     for i in range(0, len(list)):
@@ -39,17 +39,18 @@ def main():
             for p in range(0, len(array_p)):
                 adr = value
                 dataset, data_labeled, dataset_train, l_train, stream, l_stream, n_features = u.criar_datasets(5, adr)
-                # predicted, updt = handshake2.handshake2(dataset, data_labeled, dataset_train, l_train, stream, l_stream, n_components, n_features, array_ep[ep], array_p[p])
-                # d_treino, l_train, data_lab, data_labels, data_x, data_y, predicted, updt = scargc.scargc_1NN(dataset, data_labeled, dataset_train, l_train, stream, l_stream, poolsize, clusters, n_features)
+
                 start = time.time()
-                # predicted, updt = handshake_kde.handshake_kde(dataset, data_labeled, dataset_train, l_train, stream, l_stream, n_features, band, array_ep[ep], array_p[p])
-                predicted, updt = handshake2.handshake2(dataset, data_labeled, dataset_train, l_train, stream, l_stream, n_components, n_features, array_ep[ep], array_p[p])
+                # predicted, updt = handshake2.handshake2(dataset, data_labeled, dataset_train, l_train, stream, l_stream, n_components, n_features, array_ep[ep], array_p[p])
+                predicted, updt = hs.handshake2(dataset, data_labeled, dataset_train, l_train, stream, l_stream, n_components, n_features, array_ep[ep], array_p[p])
+
                 end = time.time()
                 mem = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
                 print('mem', mem)
                 tempo = end - start
+
                 acc_percent = metrics.makeBatches(l_stream, predicted, len(stream))
-                score, f1, mcc = metrics.metrics(acc_percent, l_stream, predicted)
+                score, f1, mcc = metrics.metrics(acc_percent, l_stream, predicted, f1_type = 'macro')
                 name = list[int(key)]
                 u.saveLog2(name, array_ep[ep], array_p[p], updt, acc_percent, score, f1, mcc, tempo, mem)
                 # u.saveLog(list[int(key)], acc_percent, score, f1, mcc, updt)

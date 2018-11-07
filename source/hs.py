@@ -50,12 +50,22 @@ def handshake2(dataset, data_labeled, d_treino, l_train, stream, l_stream, num_c
     # FILTER
 
     inicial_pool = inicial_pool[inicial_pool[:,-2].argsort()[::-1]]
-    pool1 = [inicial_pool[i,:] for i in range(0, len(inicial_pool)) if inicial_pool[i, -1] == class_list[0]]
-    pool2 = [inicial_pool[i,:] for i in range(0, len(inicial_pool)) if inicial_pool[i, -1] == class_list[1]]
 
-    half_percent = int(percent_pool/2)
-    inicial_pool = np.vstack([pool1[0:half_percent], pool2[0:half_percent] ])
+    pool_mix = {}
 
+    for j in range(0, len(class_list)):
+        pool_mix[j] = [inicial_pool[i,:] for i in range(0, len(inicial_pool)) if inicial_pool[i, -1] == class_list[j]]
+
+    some_percent = int(percent_pool/len(class_list))
+
+    for key, value in pool_mix.items():
+        if key == 0:
+            inicial_pool = value[0:some_percent]
+        else:
+            inicial_pool = np.vstack([inicial_pool, value[0:some_percent]])
+
+    # print(inicial_pool)
+    # sys.exit(0)
     pool = []#inicial_pool[:, :-3]
     labels = inicial_pool[:, -1]
 
@@ -105,8 +115,6 @@ def handshake2(dataset, data_labeled, d_treino, l_train, stream, l_stream, num_c
 
             concordant_labels = np.nonzero(inicial_pool[:,-3] == new_labels[:] )[0]
 
-            # print('cl', len(concordant_labels))
-
             if len(concordant_labels)/poolsize < 1:
 
                 KNN.fit(pool[:, 0:(n_features - 1)], pool[:, -1])
@@ -127,23 +135,39 @@ def handshake2(dataset, data_labeled, d_treino, l_train, stream, l_stream, num_c
 
                 new_pool = new_pool[new_pool[:,-2].argsort()[::-1]]
 
-                pool1 = [new_pool[i,:] for i in range(0, len(new_pool)) if new_pool[i, -1] == class_list[0]]
-                pool2 = [new_pool[i,:] for i in range(0, len(new_pool)) if new_pool[i, -1] == class_list[1]]
-                tam = 0
+                pool_mix = {}
 
-                if len(pool1) <= half_percent:
-                    tam = len(pool1)
-                    # t = percent_pool -
-                    inicial_pool = pool1[0:tam]
-                    inicial_pool = np.vstack([inicial_pool, pool2[0:percent_pool-tam]])
+                for j in range(0, len(class_list)):
+                    pool_mix[j] = [new_pool[i,:] for i in range(0, len(new_pool)) if new_pool[i, -1] == class_list[j]]
 
-                elif len(pool2) <= half_percent:
-                    tam = len(pool2)
-                    inicial_pool = pool2[0:tam]
-                    inicial_pool = np.vstack([inicial_pool, pool1[0:percent_pool-tam]])
+                some_percent = int(percent_pool/len(class_list))
+                inicial_pool = []
 
-                # new_pool = new_pool[new_pool[:,3].argsort()[::-1]]
-                # inicial_pool = new_pool[0:percent_pool]
+                more_elements = np.zeros(len(class_list), dtype=int)
+
+
+                for key, value in pool_mix.items():
+                    if len(value) < some_percent:
+                        # more_elements[int(key)] = 0
+                        if key == 0:
+                            inicial_pool = value[0:len(value)]
+                        else:
+                            inicial_pool = np.vstack([inicial_pool, value[0:len(value)]])
+                    else:
+                        more_elements[int(key)] = 1
+                        if key == 0:
+                            inicial_pool = value[0:some_percent]
+                        else:
+                            inicial_pool = np.vstack([inicial_pool, value[0:some_percent]])
+
+
+                tam = percent_pool - len(inicial_pool)
+                if tam > 0:
+                    for elem in range(0, len(more_elements)):
+                        if more_elements[elem] == 1:
+                            value = pool_mix[elem]
+                            inicial_pool = np.vstack([inicial_pool, value[(some_percent + 1):(some_percent + tam)]])
+
                 pool = []
                 labels = inicial_pool[:, -1]
 
