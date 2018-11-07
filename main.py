@@ -15,12 +15,13 @@ def main():
     n_components = 2
     episilon = 0.15
 
-    n_features = 2
+    n_features = 8
     # band = 0.4
     base = '/home/localuser/Documentos/procopio/tcc/datasets/'
     # base = '/home/procopio/Documents/tcc/datasets/'
     # base = '/home/god/Documents/ccomp/tcc/datasets/'
-    list = ['1CDT.txt', '1CHT.txt', '1CSurr.txt', '2CDT.txt', '2CHT.txt']
+    # list = ['1CDT.txt', '1CHT.txt', '1CSurr.txt', '2CDT.txt', '2CHT.txt']
+    list = ['elec.txt']
     database = {}
 
     for i in range(0, len(list)):

@@ -10,7 +10,12 @@ import sys
 
 def handshake2(dataset, data_labeled, d_treino, l_train, stream, l_stream, num_components, n_features, episilon, percent_init):
 
-    # classes = set(data_labeled)
+    classes = set(data_labeled)
+    class_list = list(classes)
+    class_list = np.asarray(class_list[:], dtype=int)
+
+    # print(class_list[0], 'hey', class_list[1])
+    # sys.exit(0)
     # num_class = len(classes)
     d_treino = np.delete(d_treino, np.s_[n_features-1], axis=1)
 
@@ -18,23 +23,25 @@ def handshake2(dataset, data_labeled, d_treino, l_train, stream, l_stream, num_c
 
     gmm = GaussianMixture(n_components=num_components).fit(d_treino)
 
-    KNN = KNeighborsClassifier(n_neighbors=3)
+    KNN = KNeighborsClassifier(n_neighbors=1)
     KNN.fit(d_treino, l_train)
 
-    pred = gmm.predict(np.reshape(d_treino[0,:], (-1, 2)))
+    # print(n_features)
+
+    pred = gmm.predict(np.reshape(d_treino[0,:], (-1, (n_features - 1))))
     # print(pred_s)
     cl = int(pred)
     # print(type(cl))
-    pred_proba = gmm.predict_proba(np.reshape(d_treino[0,:], (-1, 2)))
+    pred_proba = gmm.predict_proba(np.reshape(d_treino[0,:], (-1, (n_features - 1))))
     aux = np.hstack([d_treino[0, :], cl, pred_proba[0][cl], l_train[0]] )
     inicial_pool = aux
     # print(aux)
 
     for i in range(1, len(d_treino)):
 
-        pred = gmm.predict(np.reshape(d_treino[i,:], (-1, 2)))
+        pred = gmm.predict(np.reshape(d_treino[i,:], (-1, (n_features - 1))))
         cl = int(pred)
-        pred_proba = gmm.predict_proba(np.reshape(d_treino[i,:], (-1, 2)))
+        pred_proba = gmm.predict_proba(np.reshape(d_treino[i,:], (-1, (n_features - 1))))
         aux = np.hstack([d_treino[i, :], cl, pred_proba[0][cl], l_train[i]] )
 
         inicial_pool = np.vstack([inicial_pool, aux])
@@ -43,8 +50,14 @@ def handshake2(dataset, data_labeled, d_treino, l_train, stream, l_stream, num_c
     # FILTER
 
     inicial_pool = inicial_pool[inicial_pool[:,-2].argsort()[::-1]]
-    pool1 = [inicial_pool[i,:] for i in range(0, len(inicial_pool)) if inicial_pool[i, -1] == 1]
-    pool2 = [inicial_pool[i,:] for i in range(0, len(inicial_pool)) if inicial_pool[i, -1] == 2]
+
+    pool_mix = {}
+
+    for(i in range(0, len(class_list))):
+        pool_mix[i] = [inicial_pool[i,:] for i in range(0, len(inicial_pool)) if inicial_pool[i, -1] == class_list[i]]
+
+    # pool1 =
+    # pool2 = [inicial_pool[i,:] for i in range(0, len(inicial_pool)) if inicial_pool[i, -1] == 2]
 
     half_percent = int(percent_pool/2)
     inicial_pool = np.vstack([pool1[0:half_percent], pool2[0:half_percent] ])
@@ -68,7 +81,7 @@ def handshake2(dataset, data_labeled, d_treino, l_train, stream, l_stream, num_c
         x = stream[i,:-1]
         y = l_stream[i]
 
-        x = np.reshape(x, (-1, 2))
+        x = np.reshape(x, (-1, (n_features - 1)))
 
         predicted = KNN.predict(x)
         index_s = (int(predicted) - 1)
@@ -77,7 +90,7 @@ def handshake2(dataset, data_labeled, d_treino, l_train, stream, l_stream, num_c
 
         pred = gmm.predict(x)
         cl = int(pred)
-        pred_proba = gmm.predict_proba(np.reshape(x, (-1, 2)))
+        pred_proba = gmm.predict_proba(np.reshape(x, (-1, (n_features - 1))))
         trust_u = pred_proba[0][cl]
 
         delta = abs(trust_u - trust_s)
@@ -104,7 +117,7 @@ def handshake2(dataset, data_labeled, d_treino, l_train, stream, l_stream, num_c
 
                 KNN.fit(pool[:, 0:(n_features - 1)], pool[:, -1])
                 # pred_proba = gmm.predict_proba(pool[:, :(n_features - 1)])
-                pred_proba = gmm.predict_proba(np.reshape(pool[0,:(n_features - 1)], (-1, 2)))
+                pred_proba = gmm.predict_proba(np.reshape(pool[0,:(n_features - 1)], (-1, (n_features - 1))))
 
                 new_pool = []
 
@@ -114,11 +127,11 @@ def handshake2(dataset, data_labeled, d_treino, l_train, stream, l_stream, num_c
 
                 for k in range(1, len(pool)):
                     cl = int(pred_all[k])
-                    pred_proba = gmm.predict_proba(np.reshape(pool[k,:(n_features - 1)], (-1, 2)))
+                    pred_proba = gmm.predict_proba(np.reshape(pool[k,:(n_features - 1)], (-1, (n_features - 1))))
                     aux = np.hstack( [pool[k, 0:(n_features -1 )], cl, pred_proba[0][cl], pool[k, -1]] )
                     new_pool = np.vstack([new_pool, aux])
 
-                new_pool = new_pool[new_pool[:,3].argsort()[::-1]]
+                new_pool = new_pool[new_pool[:,-2].argsort()[::-1]]
 
                 pool1 = [new_pool[i,:] for i in range(0, len(new_pool)) if new_pool[i, -1] == 1]
                 pool2 = [new_pool[i,:] for i in range(0, len(new_pool)) if new_pool[i, -1] == 2]
