@@ -21,7 +21,8 @@ def main():
     # base = '/home/procopio/Documents/tcc/datasets/'
     # base = '/home/god/Documents/ccomp/tcc/datasets/'
     # list = ['1CDT.txt', '1CHT.txt', '1CSurr.txt', '2CDT.txt', '2CHT.txt']
-    list = ['keystroke.txt']
+    # list = ['keystroke.txt']
+    list = ['NOAA.txt', 'elec.txt']
     database = {}
 
     for i in range(0, len(list)):
@@ -41,8 +42,8 @@ def main():
                 dataset, data_labeled, dataset_train, l_train, stream, l_stream, n_features = u.criar_datasets(5, adr)
 
                 start = time.time()
-                # predicted, updt = handshake2.handshake2(dataset, data_labeled, dataset_train, l_train, stream, l_stream, n_components, n_features, array_ep[ep], array_p[p])
-                predicted, updt = hs.handshake2(dataset, data_labeled, dataset_train, l_train, stream, l_stream, n_components, n_features, array_ep[ep], array_p[p])
+                predicted, updt = handshake2.handshake2(dataset, data_labeled, dataset_train, l_train, stream, l_stream, n_components, n_features, array_ep[ep], array_p[p])
+                # predicted, updt = hs.handshake2(dataset, data_labeled, dataset_train, l_train, stream, l_stream, n_components, n_features, array_ep[ep], array_p[p])
 
                 end = time.time()
                 mem = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
