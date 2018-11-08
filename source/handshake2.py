@@ -23,7 +23,7 @@ def handshake2(dataset, data_labeled, d_treino, l_train, stream, l_stream, num_c
 
     gmm = GaussianMixture(n_components=num_components).fit(d_treino)
 
-    KNN = KNeighborsClassifier(n_neighbors=1)
+    KNN = KNeighborsClassifier(n_neighbors=2)
     KNN.fit(d_treino, l_train)
 
     # print(n_features)

@@ -20,9 +20,9 @@ def main():
     base = '/home/localuser/Documentos/procopio/tcc/datasets/'
     # base = '/home/procopio/Documents/tcc/datasets/'
     # base = '/home/god/Documents/ccomp/tcc/datasets/'
-    # list = ['1CDT.txt', '1CHT.txt', '1CSurr.txt', '2CDT.txt', '2CHT.txt']
+    list = ['1CDT.txt', '1CHT.txt', '1CSurr.txt', '2CDT.txt', '2CHT.txt', 'NOAA.txt', 'elec.txt', 'keystroke.txt']
     # list = ['keystroke.txt']
-    list = ['NOAA.txt', 'elec.txt']
+    # list = ['NOAA.txt', 'elec.txt']
     database = {}
 
     for i in range(0, len(list)):
@@ -42,17 +42,18 @@ def main():
                 dataset, data_labeled, dataset_train, l_train, stream, l_stream, n_features = u.criar_datasets(5, adr)
 
                 start = time.time()
-                predicted, updt = handshake2.handshake2(dataset, data_labeled, dataset_train, l_train, stream, l_stream, n_components, n_features, array_ep[ep], array_p[p])
-                # predicted, updt = hs.handshake2(dataset, data_labeled, dataset_train, l_train, stream, l_stream, n_components, n_features, array_ep[ep], array_p[p])
+                if key != 7:
+                    predicted, updt = handshake2.handshake2(dataset, data_labeled, dataset_train, l_train, stream, l_stream, n_components, n_features, array_ep[ep], array_p[p])
+                else:
+                    predicted, updt = hs.handshake2(dataset, data_labeled, dataset_train, l_train, stream, l_stream, n_components, n_features, array_ep[ep], array_p[p])
 
                 end = time.time()
                 mem = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
                 print('mem', mem)
                 tempo = end - start
-
+                name = list[int(key)]
                 acc_percent = metrics.makeBatches(l_stream, predicted, len(stream))
                 score, f1, mcc = metrics.metrics(acc_percent, l_stream, predicted, f1_type = 'macro')
-                name = list[int(key)]
                 u.saveLog2(name, array_ep[ep], array_p[p], updt, acc_percent, score, f1, mcc, tempo, mem)
                 # u.saveLog(list[int(key)], acc_percent, score, f1, mcc, updt)
                 print(key, 'episilon: ', ep, 'percentage: ', p)
