@@ -1,16 +1,16 @@
-X = [[0], [1], [2], [3]]
-y = [0, 0, 1, 1]
+from source.util import utils as u
+from source import metrics
+from source import handshake, handshake2, scargc, hs
+import sys
+import time
+import os
+import psutil
+import resource
 
-from sklearn.neighbors import KNeighborsClassifier
-neigh = KNeighborsClassifier(n_neighbors=3)
-neigh.fit(X, y)
-x = neigh.predict([[1.7]])
-p = neigh.predict_proba([[1.6]])
 
-print(x)
-i = int(x)
+def main():
 
-print(p.shape, p)
-
-print(i)
-print(p[:, i])
+    u.readAcc('/home/localuser/Documentos/procopio/tcc/d.txt')
+# /home/localuser/Documentos/procopio/tcc/experiments/
+if __name__ == '__main__':
+	main()

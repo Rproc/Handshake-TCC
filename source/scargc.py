@@ -31,7 +31,7 @@ def scargc_1NN(dataset, data_labeled, d_treino, l_train, stream, l_stream, pool_
                 aux[var, :] = d_treino[a[i], :]
                 i += 1
 
-            g = np.reshape(aux, (-1, n_features) )
+            g = np.reshape(aux, (-1, (n_features)) )
 
             aux = np.median(g, axis=0) #median will return all elements of the centroids
             centroid_past.append(aux)
@@ -44,10 +44,10 @@ def scargc_1NN(dataset, data_labeled, d_treino, l_train, stream, l_stream, pool_
         KNN = KNeighborsClassifier(n_neighbors=1)
         KNN.fit(d_treino[:,:-1], l_train)
         centroid_past_lab = []
-        centroid_past_lab = KNN.predict(np.reshape(centroid_past[0,:], (-1, 2)))
+        centroid_past_lab = KNN.predict(np.reshape(centroid_past[0,:], (-1, (n_features - 1))))
 
         for core in range(1, centroid_past.shape[0]):
-            pred = KNN.predict(np.reshape(centroid_past[core,:], (-1, 2)))
+            pred = KNN.predict(np.reshape(centroid_past[core,:], (-1, (n_features - 1))))
             centroid_past_lab = np.vstack([centroid_past_lab, pred])
 
         centroid_past = np.hstack([centroid_past, centroid_past_lab])
@@ -76,7 +76,8 @@ def scargc_1NN(dataset, data_labeled, d_treino, l_train, stream, l_stream, pool_
         KNN = KNeighborsClassifier(n_neighbors=1)
         KNN.fit(d_treino, l_train)
 
-        x = np.reshape(x, (-1, 2))
+        x = np.reshape(x, (-1, (n_features - 1)))
+
         predicted = KNN.predict(x)
 
         # Save stream data
@@ -158,5 +159,5 @@ def scargc_1NN(dataset, data_labeled, d_treino, l_train, stream, l_stream, pool_
 
 
 
-    return d_treino, l_train, data_lab, data_labels, data_x, data_y, knn_labels, updt
+    return knn_labels, updt
     # print(pool)
