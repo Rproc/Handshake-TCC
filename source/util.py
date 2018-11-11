@@ -3,6 +3,7 @@
 import math
 import numpy as np
 import os.path
+from sklearn.decomposition import PCA
 
 
 class utils:
@@ -138,3 +139,11 @@ class utils:
         ab = name_dataset + '\n' + 'Executed in: ' + str(time) + ' seconds\n' + 'ep: ' + str(ep) + ' percent_pool: ' + str(percent) + ' number of updts: ' + str(updt) + '\nacc_percent: '+ str(acc_percent) + '\n'+ 'score: ' + str(score) + '\n' + 'f1: ' + str(f1)+ '\n'+ 'mcc: ' + str(mcc) + '\n\n'
         f.write(ab)
         f.close()
+
+
+    def pca(X, numComponents):
+        pca = PCA(n_components=numComponents)
+        pca.fit(X)
+        PCA(copy=True, iterated_power='auto', n_components=numComponents, random_state=None, svd_solver='auto', tol=0.0, whiten=False)
+
+        return pca.transform(X)
