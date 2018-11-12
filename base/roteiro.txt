@@ -1,0 +1,51 @@
+Introdução
+
+Conceitos
+	Aprendizado Semi-supervisionado + Extreme Latency (done)
+	Concept Drift (por hora feito)
+	KNN (done)
+	GMM (done)
+	Review Dataset (done)
+	Review Literatura (done)
+	SCARGC
+
+Handshake
+	Casos relacionados à mudança (feito)
+		Cada Caso
+	Pseudocode (feito) 
+	Explicação do Algoritmo (HS, Filtro)
+	Marcar pseudo e explicar decisão
+
+Experimentos
+	Falar dos Datasets
+	Configuração dos Experimentos (pico de memória)
+		Decisões
+		Cenarios
+		Parametros
+	Resultados
+		Graficos/tabelas/figuras
+		Explicar resultados
+
+Conclusão
+	Sobre o trabalho (resumo)
+	Sobre o resultado (boas e defeitos)
+	Sobre trabalhos futuros 
+
+
+
+CAP 3
+	Motivação
+		Por que mudar o algoritmo
+		Mudança -- usar 2 classificadores e suas precisões (confianças)
+		Range da confiança (falar sobre confiança em geral)
+		Explicar o que é o handshake (gancho para cenarios)
+
+	Cenarios
+		4 casos
+	Algoritmo
+	Explicação mais detalhada do algoritmo
+		Trechos de códigos
+	Explicar tomada de decisão no FILTRO
+
+	Gancho para Experimentos??
+
