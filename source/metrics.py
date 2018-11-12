@@ -35,12 +35,9 @@ def makeBatches(label_stream, predicted_label, size_stream):
 
 
 def metrics(data_acc, l_stream, predicted, f1_type = 'binary'):
-    # score = round(accuracy_score(l_stream, predicted), 4)
 
     score = np.sum(data_acc)
     score = score/100
-    # print(score)
-    # sys.exit(0)
     f1 = f1_score(l_stream, predicted, average = f1_type)
     mcc = matthews_corrcoef(l_stream, predicted)
     std = np.std(data_acc)
