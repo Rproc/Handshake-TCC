@@ -20,9 +20,9 @@ def main():
     base = '/home/localuser/Documentos/procopio/tcc/datasets/'
     # base = '/home/procopio/Documents/tcc/datasets/'
     # base = '/home/god/Documents/ccomp/tcc/datasets/'
-    list = ['1CDT.txt']#, '1CHT.txt', '1CSurr.txt', '2CDT.txt', '2CHT.txt', 'NOAA.txt', 'elec.txt', 'keystroke.txt']
+    # list = ['1CDT.txt']#, '1CHT.txt', '1CSurr.txt', '2CDT.txt', '2CHT.txt', 'NOAA.txt', 'elec.txt', 'keystroke.txt']
     # list = ['keystroke.txt']
-    # list = ['NOAA.txt', 'elec.txt']
+    list = ['NOAA.txt']#, 'elec.txt']
     database = {}
 
     for i in range(0, len(list)):
@@ -61,14 +61,18 @@ def main():
                 tempoS = endScargc - startScargc
                 tempo = end - start
                 name = list[int(key)]
+
                 acc_percent, f1_percent, mcc_percent = metrics.makeBatches(l_stream, predicted, len(stream))
                 score, f1, mcc, std = metrics.metrics(acc_percent, l_stream, predicted, f1_type = 'macro')
 
-                acc_percentScargc = metrics.makeBatches(l_stream, predictedS, len(stream))
+                acc_percentScargc, f1_percentS, mcc_percentS = metrics.makeBatches(l_stream, predictedS, len(stream))
                 scoreS, f1S, mccS, stdS = metrics.metrics(acc_percentScargc, l_stream, predictedS, f1_type = 'macro')
-
+                # print(f1_percentS[0])
                 # u.saveLog2(name, array_ep[ep], array_p[p], updt, acc_percent, score, f1, mcc, tempo, mem)
                 matrixAcc = [acc_percent[0], acc_percentScargc[0]]
+                matrixF1 = [f1_percent[0], f1_percentS[0]]
+
+                # print(matrixF1)
                 listTime = [tempo, tempoS]
                 listAcc = [score, scoreS]
                 listMethod = ['Handshake', 'SCARGC']
@@ -78,8 +82,10 @@ def main():
                 print('MCC: ', mcc)
                 print('Desvio Padrão: ', std)
                 print('Numero de atualizações: ', updt)
-                #
-                # plots.plotAcc(acc_percent, 100, '1CDT_Handshake')
+                # plots.plotF1(f1_percent, 100, '1CDT_Handshake')
+                # plots.plotF1(f1_percentS, 100, '1CDT_SCARGC')
+
+                plots.plotAcc(acc_percent, 100, 'keystroke')
                 # plots.plotAccuracyCurves(matrixAcc, listMethod)
 
                 plots.plotPerBatches(stream, predicted, l_stream, len(stream))
