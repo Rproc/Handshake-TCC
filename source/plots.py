@@ -187,9 +187,7 @@ def plotPerBatches(stream, predicted, actualLabel, size_stream):
     # 2 Classes, n features --- NOAA, elec
     elif len(stream[0,:-1]) > 2 and len(list(set(actualLabel))) == 2:
 
-        # print(stream[0,:])
         stream = u.pca(stream[:,:-1], 2)
-        # print(stream)
 
         for i in range(0, 100):
             classes = list(set(actualLabel))
@@ -238,11 +236,8 @@ def plotPerBatches(stream, predicted, actualLabel, size_stream):
 
         stream = u.pca(stream[:, :-1], 2)
 
-        # print(stream)
-
         for i in range(0, 100):
             classes = list(set(actualLabel))
-            # print(classes)
             plt.rcParams["figure.figsize"] = (10.5,4.8)
             fig = plt.figure()
             cmx = plt.get_cmap('Paired')
@@ -260,11 +255,9 @@ def plotPerBatches(stream, predicted, actualLabel, size_stream):
 
             for cl in classes:
                 color = int(cl) - 1
-                # print(color)
                 p = batch[np.where(newlist_original==cl)[0]]
                 p2 = batch[np.where(newlist_predicted==cl)[0]]
 
-                # print(p)
                 x1 = p[:,0]
                 x2 = p[:,1]
 
