@@ -17,9 +17,9 @@ def main():
 
     # n_features = 8
     # band = 0.4
-    # base = '/home/localuser/Documentos/procopio/tcc/datasets/'
+    base = '/home/localuser/Documentos/procopio/tcc/datasets/'
     # base = '/home/procopio/Documents/tcc/datasets/'
-    base = '/home/god/Documents/ccomp/tcc/datasets/'
+    # base = '/home/god/Documents/ccomp/tcc/datasets/'
     list = ['1CDT.txt']#, '1CHT.txt', '1CSurr.txt', '2CDT.txt', '2CHT.txt', 'NOAA.txt', 'elec.txt', 'keystroke.txt']
     # list = ['keystroke.txt']
     # list = ['NOAA.txt', 'elec.txt']
