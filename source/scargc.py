@@ -16,7 +16,7 @@ def scargc_1NN(dataset, data_labeled, d_treino, l_train, stream, l_stream, pool_
     centroid_past = []
     centroid_temp = []
 
-    print(d_treino.shape[0])
+    # print(d_treino.shape[0])
 
     # d_train = np.delete(d_treino, np.s_[n_features-1], axis=1)
 

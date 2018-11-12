@@ -12,9 +12,11 @@ def makeBatches(label_stream, predicted_label, size_stream):
     newlist_predicted = predicted_label[int((0/100)*size_stream):int(((0+1)/100)*size_stream)]
 
     score = accuracy_score(newlist_original, newlist_predicted)
-    data_f1 = f1_score(newlist_original, newlist_predicted, average='macro')
-    data_mcc = matthews_corrcoef(newlist_original, newlist_predicted)
+    f1 = f1_score(newlist_original, newlist_predicted, average='macro')
+    mcc = matthews_corrcoef(newlist_original, newlist_predicted)
     data_acc = score
+    data_f1 = f1
+    data_mcc = mcc
 
     for i in range(1, 100):
         newlist_original = label_stream[int((i/100)*size_stream)+1:int(((i+1)/100)*size_stream)]
@@ -28,7 +30,7 @@ def makeBatches(label_stream, predicted_label, size_stream):
         data_f1 = np.column_stack((data_f1, f1))
         data_mcc = np.column_stack((data_mcc, mcc))
 
-        
+
     return data_acc, data_f1, data_mcc
 
 

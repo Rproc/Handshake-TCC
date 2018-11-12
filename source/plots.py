@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 from source.util import utils
 import matplotlib as mpl
+from source.util import utils as u
+
 
 
 def plotAcc(data_acc, steps, label):
@@ -22,6 +24,39 @@ def plotAcc(data_acc, steps, label):
     plt.xlabel("Step")
     plt.grid()
     plt.show()
+
+def plotF1(arrF1, steps, label):
+    arrF1 = arrF1[0]
+    # print(arrF1)
+    c = range(len(arrF1))
+    fig = plt.figure()
+    fig.add_subplot(122)
+    ax = plt.axes()
+    ax.plot(c, arrF1, 'k')
+    plt.yticks([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1])
+    plt.xticks(range(1, steps+1, 10))
+    plt.title(label)
+    plt.ylabel("F1")
+    plt.xlabel("Step")
+    plt.grid()
+    plt.show()
+
+def plotMCC(arrMcc, steps, label):
+    arrMcc = arrMcc[0]
+    # print(arrF1)
+    c = range(len(arrMcc))
+    fig = plt.figure()
+    fig.add_subplot(122)
+    ax = plt.axes()
+    ax.plot(c, arrMcc, 'k')
+    plt.yticks([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1])
+    plt.xticks(range(1, steps+1, 10))
+    plt.title(label)
+    plt.ylabel("MCC")
+    plt.xlabel("Step")
+    plt.grid()
+    plt.show()
+
 
 def plotTime(listOfTimes, listOfMethods):
 
@@ -53,6 +88,9 @@ def plotAverageAcc(listOfAcc, listOfMethods):
     plt.xticks(rotation=90)
     plt.grid()
     plt.show()
+
+
+
 
 def plotAccuracyCurves(listOfAccuracies, listOfMethods):
     limit = len(listOfAccuracies[0])+1
@@ -91,23 +129,7 @@ def plotBoxplot(mode, data, labels):
 
     plt.show()
 
-def plotF1(arrF1, steps, label):
-    arrF1 = np.array(arrF1)
-    c = range(len(arrF1))
-    fig = plt.figure()
-    fig.add_subplot(122)
-    ax = plt.axes()
-    ax.plot(c, arrF1, 'k')
-    plt.yticks([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1])
-    if steps > 10:
-        plt.xticks(range(1, steps+1, 10))
-    else:
-        plt.xticks(range(1, steps+1))
-    plt.title(label)
-    plt.ylabel("F1")
-    plt.xlabel("Step")
-    plt.grid()
-    plt.show()
+
 
 def plotPerBatches(stream, predicted, actualLabel, size_stream):
 
@@ -136,6 +158,8 @@ def plotPerBatches(stream, predicted, actualLabel, size_stream):
                 # print(color)
                 p = batch[np.where(newlist_original==cl)[0]]
                 p2 = batch[np.where(newlist_predicted==cl)[0]]
+
+                # print(p)
                 x1 = p[:,0]
                 x2 = p[:,1]
 
@@ -163,11 +187,13 @@ def plotPerBatches(stream, predicted, actualLabel, size_stream):
     # 2 Classes, n features --- NOAA, elec
     elif len(stream[0,:-1]) > 2 and len(list(set(actualLabel))) == 2:
 
-        stream = u.pca(stream, 2)
+        # print(stream[0,:])
+        stream = u.pca(stream[:,:-1], 2)
+        # print(stream)
 
         for i in range(0, 100):
             classes = list(set(actualLabel))
-            # print(classes)
+            # (classes)
             plt.rcParams["figure.figsize"] = (10.5,4.8)
             fig = plt.figure()
             cmx = plt.get_cmap('Paired')
@@ -181,8 +207,9 @@ def plotPerBatches(stream, predicted, actualLabel, size_stream):
 
             newlist_original = actualLabel[int((i/100)*size_stream):int(((i+1)/100)*size_stream)]
             newlist_predicted = predicted[int((i/100)*size_stream):int(((i+1)/100)*size_stream)]
-            batch = stream[int((i/100)*size_stream):int(((i+1)/100)*size_stream), :-1]
+            batch = stream[int((i/100)*size_stream):int(((i+1)/100)*size_stream), :]
 
+            # print(batch)
             for cl in classes:
                 color = int(cl) - 1
                 # print(color)
@@ -209,7 +236,9 @@ def plotPerBatches(stream, predicted, actualLabel, size_stream):
     # n classes, n features ---- keystroke
     elif len(stream[0,:-1]) > 2 and len(list(set(actualLabel))) > 2:
 
-        stream = u.pca(stream, 2)
+        stream = u.pca(stream[:, :-1], 2)
+
+        # print(stream)
 
         for i in range(0, 100):
             classes = list(set(actualLabel))
@@ -227,13 +256,15 @@ def plotPerBatches(stream, predicted, actualLabel, size_stream):
 
             newlist_original = actualLabel[int((i/100)*size_stream):int(((i+1)/100)*size_stream)]
             newlist_predicted = predicted[int((i/100)*size_stream):int(((i+1)/100)*size_stream)]
-            batch = stream[int((i/100)*size_stream):int(((i+1)/100)*size_stream), :-1]
+            batch = stream[int((i/100)*size_stream):int(((i+1)/100)*size_stream), :]
 
             for cl in classes:
                 color = int(cl) - 1
                 # print(color)
                 p = batch[np.where(newlist_original==cl)[0]]
                 p2 = batch[np.where(newlist_predicted==cl)[0]]
+
+                # print(p)
                 x1 = p[:,0]
                 x2 = p[:,1]
 
