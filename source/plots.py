@@ -9,6 +9,7 @@ from source.util import utils as u
 
 
 def plotAcc(data_acc, steps, label):
+
     data_acc = np.multiply(data_acc[0], 100)
     # print(data_acc)
     c = range(len(data_acc))
@@ -92,7 +93,7 @@ def plotAverageAcc(listOfAcc, listOfMethods):
 
 
 
-def plotAccuracyCurves(listOfAccuracies, listOfMethods):
+def plotAccuracyCurves(listOfAccuracies, listOfMethods, steps):
     limit = len(listOfAccuracies[0])+1
     listOfAccuracies = np.multiply(listOfAccuracies, 100)
     for acc in listOfAccuracies:
@@ -104,7 +105,7 @@ def plotAccuracyCurves(listOfAccuracies, listOfMethods):
     plt.title("Curva de Acurácia")
     plt.legend(listOfMethods, loc=3)
     plt.yticks([0,10,20,30,40,50,60,70,80,90,100])
-    plt.xticks(range(0, limit, 10))
+    plt.xticks(range(0, steps, 10))
     plt.ylabel("Acurácia")
     plt.xlabel("Step")
     plt.grid()
@@ -131,11 +132,11 @@ def plotBoxplot(mode, data, labels):
 
 
 
-def plotPerBatches(stream, predicted, actualLabel, size_stream):
+def plotPerBatches(stream, predicted, actualLabel, size_stream, step):
 
     # 2 Classes, 2 features
     if len(stream[0,:-1]) == 2 and len(list(set(actualLabel))) == 2:
-        for i in range(0, 100):
+        for i in range(0, step):
             classes = list(set(actualLabel))
             # print(classes)
             plt.rcParams["figure.figsize"] = (10.5,4.8)
@@ -149,9 +150,9 @@ def plotPerBatches(stream, predicted, actualLabel, size_stream):
             ax2 = fig.add_subplot(122)
             handles2 = []
 
-            newlist_original = actualLabel[int((i/100)*size_stream):int(((i+1)/100)*size_stream)]
-            newlist_predicted = predicted[int((i/100)*size_stream):int(((i+1)/100)*size_stream)]
-            batch = stream[int((i/100)*size_stream):int(((i+1)/100)*size_stream), :-1]
+            newlist_original = actualLabel[int((i/step)*size_stream):int(((i+1)/step)*size_stream)]
+            newlist_predicted = predicted[int((i/step)*size_stream):int(((i+1)/step)*size_stream)]
+            batch = stream[int((i/step)*size_stream):int(((i+1)/step)*size_stream), :-1]
 
             for cl in classes:
                 color = int(cl) - 1
@@ -189,7 +190,7 @@ def plotPerBatches(stream, predicted, actualLabel, size_stream):
 
         stream = u.pca(stream[:,:-1], 2)
 
-        for i in range(0, 100):
+        for i in range(0, step):
             classes = list(set(actualLabel))
             # (classes)
             plt.rcParams["figure.figsize"] = (10.5,4.8)
@@ -203,9 +204,9 @@ def plotPerBatches(stream, predicted, actualLabel, size_stream):
             ax2 = fig.add_subplot(122)
             handles2 = []
 
-            newlist_original = actualLabel[int((i/100)*size_stream):int(((i+1)/100)*size_stream)]
-            newlist_predicted = predicted[int((i/100)*size_stream):int(((i+1)/100)*size_stream)]
-            batch = stream[int((i/100)*size_stream):int(((i+1)/100)*size_stream), :]
+            newlist_original = actualLabel[int((i/step)*size_stream):int(((i+1)/step)*size_stream)]
+            newlist_predicted = predicted[int((i/step)*size_stream):int(((i+1)/step)*size_stream)]
+            batch = stream[int((i/step)*size_stream):int(((i+1)/step)*size_stream), :]
 
             # print(batch)
             for cl in classes:
@@ -236,7 +237,7 @@ def plotPerBatches(stream, predicted, actualLabel, size_stream):
 
         stream = u.pca(stream[:, :-1], 2)
 
-        for i in range(0, 100):
+        for i in range(0, step):
             classes = list(set(actualLabel))
             plt.rcParams["figure.figsize"] = (10.5,4.8)
             fig = plt.figure()
@@ -249,9 +250,9 @@ def plotPerBatches(stream, predicted, actualLabel, size_stream):
             ax2 = fig.add_subplot(122)
             handles2 = []
 
-            newlist_original = actualLabel[int((i/100)*size_stream):int(((i+1)/100)*size_stream)]
-            newlist_predicted = predicted[int((i/100)*size_stream):int(((i+1)/100)*size_stream)]
-            batch = stream[int((i/100)*size_stream):int(((i+1)/100)*size_stream), :]
+            newlist_original = actualLabel[int((i/step)*size_stream):int(((i+1)/step)*size_stream)]
+            newlist_predicted = predicted[int((i/step)*size_stream):int(((i+1)/step)*size_stream)]
+            batch = stream[int((i/step)*size_stream):int(((i+1)/step)*size_stream), :]
 
             for cl in classes:
                 color = int(cl) - 1
@@ -276,33 +277,33 @@ def plotPerBatches(stream, predicted, actualLabel, size_stream):
             fig.suptitle(title)
             plt.show()
 
-def plot(X, y, t):
-    classes = list(set(y))
-    fig = plt.figure()
-    handles = []
-    classLabels = []
-    cmx = plt.get_cmap('Paired')
-    colors = cmx(np.linspace(0, 1, (len(classes)*2)+1))
-    #classLabels = ['Class 1', 'Core 1', 'Class 2', 'Core 2']
-    color=0
-    for cl in classes:
-        #points
-        points = X[np.where(y==cl)[0]]
-        x1 = points[:,0]
-        x2 = points[:,1]
-        handles.append(ax.scatter(x1, x2, c = colors[color]))
-        #core support points
-        color+=1
-        corePoints = coreX[np.where(coreY==cl)[0]]
-        coreX1 = corePoints[:,0]
-        coreX2 = corePoints[:,1]
-        handles.append(ax.scatter(coreX1, coreX2, c = colors[color]))
-        #labels
-        classLabels.append('Class {}'.format(cl))
-        classLabels.append('Core {}'.format(cl))
-        color+=1
-
-    ax.legend(handles, classLabels)
-    title = "Data distribution. Step {}".format(t)
-    plt.title(title)
-    plt.show()
+# def plot(X, y, t):
+#     classes = list(set(y))
+#     fig = plt.figure()
+#     handles = []
+#     classLabels = []
+#     cmx = plt.get_cmap('Paired')
+#     colors = cmx(np.linspace(0, 1, (len(classes)*2)+1))
+#     #classLabels = ['Class 1', 'Core 1', 'Class 2', 'Core 2']
+#     color=0
+#     for cl in classes:
+#         #points
+#         points = X[np.where(y==cl)[0]]
+#         x1 = points[:,0]
+#         x2 = points[:,1]
+#         handles.append(ax.scatter(x1, x2, c = colors[color]))
+#         #core support points
+#         color+=1
+#         corePoints = coreX[np.where(coreY==cl)[0]]
+#         coreX1 = corePoints[:,0]
+#         coreX2 = corePoints[:,1]
+#         handles.append(ax.scatter(coreX1, coreX2, c = colors[color]))
+#         #labels
+#         classLabels.append('Class {}'.format(cl))
+#         classLabels.append('Core {}'.format(cl))
+#         color+=1
+#
+#     ax.legend(handles, classLabels)
+#     title = "Data distribution. Step {}".format(t)
+#     plt.title(title)
+#     plt.show()
