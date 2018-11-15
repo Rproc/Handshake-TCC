@@ -9,7 +9,6 @@ from source.util import utils as u
 
 
 def plotAcc(data_acc, steps, label):
-    plt.rcParams["figure.figsize"] = (8.0, 6.0)
 
     data_acc = np.multiply(data_acc[0], 100)
     # print(data_acc)
@@ -28,8 +27,6 @@ def plotAcc(data_acc, steps, label):
     plt.show()
 
 def plotF1(arrF1, steps, label):
-    plt.rcParams["figure.figsize"] = (8.0, 6.0)
-
     arrF1 = arrF1[0]
     # print(arrF1)
     c = range(len(arrF1))
@@ -46,8 +43,6 @@ def plotF1(arrF1, steps, label):
     plt.show()
 
 def plotMCC(arrMcc, steps, label):
-    plt.rcParams["figure.figsize"] = (8.0, 6.0)
-
     arrMcc = arrMcc[0]
     # print(arrF1)
     c = range(len(arrMcc))
@@ -63,9 +58,7 @@ def plotMCC(arrMcc, steps, label):
     plt.grid()
     plt.show()
 
-
 def plotTime(listOfTimes, listOfMethods):
-    plt.rcParams["figure.figsize"] = (8.0, 6.0)
 
     for l in range(len(listOfTimes)):
         ax = plt.axes()
@@ -80,7 +73,6 @@ def plotTime(listOfTimes, listOfMethods):
     plt.show()
 
 def plotAverageAcc(listOfAcc, listOfMethods):
-    plt.rcParams["figure.figsize"] = (8.0, 6.0)
 
     listOfAcc = np.multiply(listOfAcc, 100)
 
@@ -97,11 +89,7 @@ def plotAverageAcc(listOfAcc, listOfMethods):
     plt.grid()
     plt.show()
 
-
-
-
 def plotAccuracyCurves(listOfAccuracies, listOfMethods, steps):
-    plt.rcParams["figure.figsize"] = (8.0, 6.0)
 
     limit = len(listOfAccuracies[0])+1
     listOfAccuracies = np.multiply(listOfAccuracies, 100)
@@ -121,7 +109,6 @@ def plotAccuracyCurves(listOfAccuracies, listOfMethods, steps):
     plt.show()
 
 def plotBoxplot(mode, data, labels):
-    plt.rcParams["figure.figsize"] = (8.0, 6.0)
 
     fig = plt.figure()
     fig.add_subplot(111)
@@ -140,8 +127,6 @@ def plotBoxplot(mode, data, labels):
         plt.ylabel("Macro-F1")
 
     plt.show()
-
-
 
 def plotPerBatches(stream, predicted, actualLabel, size_stream, step):
 
