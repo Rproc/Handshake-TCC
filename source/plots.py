@@ -9,6 +9,7 @@ from source.util import utils as u
 
 
 def plotAcc(data_acc, steps, label):
+    plt.rcParams["figure.figsize"] = (8.0, 6.0)
 
     data_acc = np.multiply(data_acc[0], 100)
     # print(data_acc)
@@ -27,6 +28,8 @@ def plotAcc(data_acc, steps, label):
     plt.show()
 
 def plotF1(arrF1, steps, label):
+    plt.rcParams["figure.figsize"] = (8.0, 6.0)
+
     arrF1 = arrF1[0]
     # print(arrF1)
     c = range(len(arrF1))
@@ -43,6 +46,8 @@ def plotF1(arrF1, steps, label):
     plt.show()
 
 def plotMCC(arrMcc, steps, label):
+    plt.rcParams["figure.figsize"] = (8.0, 6.0)
+
     arrMcc = arrMcc[0]
     # print(arrF1)
     c = range(len(arrMcc))
@@ -60,6 +65,7 @@ def plotMCC(arrMcc, steps, label):
 
 
 def plotTime(listOfTimes, listOfMethods):
+    plt.rcParams["figure.figsize"] = (8.0, 6.0)
 
     for l in range(len(listOfTimes)):
         ax = plt.axes()
@@ -74,6 +80,7 @@ def plotTime(listOfTimes, listOfMethods):
     plt.show()
 
 def plotAverageAcc(listOfAcc, listOfMethods):
+    plt.rcParams["figure.figsize"] = (8.0, 6.0)
 
     listOfAcc = np.multiply(listOfAcc, 100)
 
@@ -94,6 +101,8 @@ def plotAverageAcc(listOfAcc, listOfMethods):
 
 
 def plotAccuracyCurves(listOfAccuracies, listOfMethods, steps):
+    plt.rcParams["figure.figsize"] = (8.0, 6.0)
+
     limit = len(listOfAccuracies[0])+1
     listOfAccuracies = np.multiply(listOfAccuracies, 100)
     for acc in listOfAccuracies:
@@ -112,6 +121,8 @@ def plotAccuracyCurves(listOfAccuracies, listOfMethods, steps):
     plt.show()
 
 def plotBoxplot(mode, data, labels):
+    plt.rcParams["figure.figsize"] = (8.0, 6.0)
+
     fig = plt.figure()
     fig.add_subplot(111)
     plt.boxplot(data, labels=labels)
@@ -276,34 +287,3 @@ def plotPerBatches(stream, predicted, actualLabel, size_stream, step):
             title = "Distribuição dos dados. Step {}".format(i)
             fig.suptitle(title)
             plt.show()
-
-# def plot(X, y, t):
-#     classes = list(set(y))
-#     fig = plt.figure()
-#     handles = []
-#     classLabels = []
-#     cmx = plt.get_cmap('Paired')
-#     colors = cmx(np.linspace(0, 1, (len(classes)*2)+1))
-#     #classLabels = ['Class 1', 'Core 1', 'Class 2', 'Core 2']
-#     color=0
-#     for cl in classes:
-#         #points
-#         points = X[np.where(y==cl)[0]]
-#         x1 = points[:,0]
-#         x2 = points[:,1]
-#         handles.append(ax.scatter(x1, x2, c = colors[color]))
-#         #core support points
-#         color+=1
-#         corePoints = coreX[np.where(coreY==cl)[0]]
-#         coreX1 = corePoints[:,0]
-#         coreX2 = corePoints[:,1]
-#         handles.append(ax.scatter(coreX1, coreX2, c = colors[color]))
-#         #labels
-#         classLabels.append('Class {}'.format(cl))
-#         classLabels.append('Core {}'.format(cl))
-#         color+=1
-#
-#     ax.legend(handles, classLabels)
-#     title = "Data distribution. Step {}".format(t)
-#     plt.title(title)
-#     plt.show()
