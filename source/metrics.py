@@ -1,7 +1,5 @@
 import numpy as np
-from sklearn.metrics import accuracy_score
-from sklearn.metrics import matthews_corrcoef
-from sklearn.metrics import f1_score
+from sklearn.metrics import accuracy_score, matthews_corrcoef, f1_score
 from math import sqrt
 import sys
 
@@ -11,6 +9,8 @@ def makeBatches(label_stream, predicted_label, size_stream, step):
     newlist_original = label_stream[int((0/step)*size_stream):int(((0+1)/step)*size_stream)]
     newlist_predicted = predicted_label[int((0/step)*size_stream):int(((0+1)/step)*size_stream)]
 
+    # print(len(newlist_original))
+    # print(len(newlist_predicted))
     score = accuracy_score(newlist_original, newlist_predicted)
     f1 = f1_score(newlist_original, newlist_predicted, average='macro')
     mcc = matthews_corrcoef(newlist_original, newlist_predicted)
@@ -36,6 +36,9 @@ def makeBatches(label_stream, predicted_label, size_stream, step):
 
 def metrics(data_acc, l_stream, predicted, step, f1_type = 'binary'):
 
+    # print(l_stream)
+    # print(predicted)
+    # predicted = predicted.flatten()
     score = np.sum(data_acc)
     score = score/step
     f1 = f1_score(l_stream, predicted, average = f1_type)

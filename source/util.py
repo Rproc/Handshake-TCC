@@ -4,7 +4,7 @@ import math
 import numpy as np
 import os.path
 from sklearn.decomposition import PCA
-
+from source import handshake2 as hs2
 
 class utils:
 
@@ -61,6 +61,9 @@ class utils:
         # print(l_train[0])
         return dataset, data_labeled, d_treino, l_train, d_stream, l_stream, n_features
 
+
+    def chunkify(lst, n):
+        return [lst[i::n] for i in range(n)]    
 
     def cossine_similarity(u1, u2):
 

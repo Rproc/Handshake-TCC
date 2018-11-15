@@ -19,6 +19,9 @@ def handshake2(dataset, data_labeled, d_treino, l_train, stream, l_stream, num_c
     # num_class = len(classes)
     d_treino = np.delete(d_treino, np.s_[n_features-1], axis=1)
 
+    # print(len(d_treino))
+    # print(percent_init)
+
     percent_pool = int( len(d_treino)/100 * percent_init )
 
     gmm = GaussianMixture(n_components=num_components).fit(d_treino)
