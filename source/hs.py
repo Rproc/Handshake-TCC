@@ -8,7 +8,7 @@ from sklearn.neighbors import KNeighborsClassifier
 import sys
 
 
-def handshake2(dataset, data_labeled, d_treino, l_train, stream, l_stream, num_components, n_features, episilon, percent_init):
+def handshake2(dataset, data_labeled, d_treino, l_train, stream, l_stream, num_components, n_features, episilon, percent_init, k):
 
     classes = set(data_labeled)
     class_list = list(classes)
@@ -23,7 +23,7 @@ def handshake2(dataset, data_labeled, d_treino, l_train, stream, l_stream, num_c
 
     gmm = GaussianMixture(n_components=num_components).fit(d_treino)
 
-    KNN = KNeighborsClassifier(n_neighbors=1)
+    KNN = KNeighborsClassifier(n_neighbors=k)
     KNN.fit(d_treino, l_train)
 
     # print(n_features)
