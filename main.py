@@ -41,7 +41,7 @@ def doTrain(data, label, step, n_features, percent, epsilon, n_components):
     predicted = []
     updt = []
 
-    pred, updt = handshake2.handshake2(data, label_, data[0], label[0], data[1], label[1], n_components, n_features, epsilon, percent)
+    pred, updt = hs.handshake2(data, label_, data[0], label[0], data[1], label[1], n_components, n_features, epsilon, percent, 1)
     pred = np.array(pred, dtype=int)
     # print(label[i])
     pred = pred.flatten()
@@ -88,17 +88,17 @@ def main():
 
     poolsize = 300
     clusters = 2
-    n_components = 2
+    n_components = 4
     # episilon = 0.15
-    step = 10
+    step = 5
 
     # n_features = 8
     # band = 0.4
     # base = '/home/localuser/Documentos/procopio/tcc/datasets/'
     # base = '/home/procopio/Documents/tcc/datasets/'
-    base = '/home/god/Documents/ccomp/tcc/datasets/'
-    list = ['1CSurr.txt', '2CDT.txt', '2CHT.txt']# 'NOAA.txt', 'elec.txt', 'keystroke.txt']
-    # list = ['keystroke.txt']
+    base = '/home/god/Documentos//tcc/datasets/'
+#     list = ['1CSurr.txt', '2CDT.txt', '2CHT.txt']# 'NOAA.txt', 'elec.txt', 'keystroke.txt']
+    list = ['keystroke.txt']
     # list = ['NOAA.txt']#, 'elec.txt']
     database = {}
 
@@ -119,10 +119,6 @@ def main():
         dic[key] = {}
         for ep in range(0, len(array_ep)):
             for p in range(0, len(array_p)):
-
-                if key == 7:
-                    n_components = 4
-                    step = 2
                 adr = value
                 dataset, data_labeled, dataset_train, l_train, stream, l_stream, n_features = u.criar_datasets(5, adr)
 
