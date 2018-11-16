@@ -79,7 +79,7 @@ def handshake2(dataset, data_labeled, d_treino, l_train, stream, l_stream, num_c
     poolsize = len(inicial_pool)
     count = 0
     updt = 0
-
+    # print(poolsize)
     for i in range(0, len(stream)):
 
         x = stream[i,:-1]
@@ -134,7 +134,6 @@ def handshake2(dataset, data_labeled, d_treino, l_train, stream, l_stream, num_c
                     new_pool = np.vstack([new_pool, aux])
 
                 new_pool = new_pool[new_pool[:,-2].argsort()[::-1]]
-
                 pool_mix = {}
 
                 for j in range(0, len(class_list)):
@@ -145,7 +144,6 @@ def handshake2(dataset, data_labeled, d_treino, l_train, stream, l_stream, num_c
 
                 more_elements = np.zeros(len(class_list), dtype=int)
 
-
                 for key, value in pool_mix.items():
                     if len(value) < some_percent:
                         # more_elements[int(key)] = 0
@@ -154,7 +152,9 @@ def handshake2(dataset, data_labeled, d_treino, l_train, stream, l_stream, num_c
                         else:
                             inicial_pool = np.vstack([inicial_pool, value[0:len(value)]])
                     else:
-                        more_elements[int(key)] = 1
+                        if len(value) > some_percent:
+                            # print('key', key)
+                            more_elements[int(key)] = 1
                         if key == 0:
                             inicial_pool = value[0:some_percent]
                         else:
@@ -162,11 +162,15 @@ def handshake2(dataset, data_labeled, d_treino, l_train, stream, l_stream, num_c
 
 
                 tam = percent_pool - len(inicial_pool)
+                # print(tam, some_percent)
+                # sys.exit(0)
                 if tam > 0:
                     for elem in range(0, len(more_elements)):
                         if more_elements[elem] == 1:
                             value = pool_mix[elem]
-                            inicial_pool = np.vstack([inicial_pool, value[(some_percent + 1):(some_percent + tam)]])
+                            # print(value)
+                            # print(value[6])
+                            inicial_pool = np.vstack([inicial_pool, value[(some_percent):(some_percent + tam)]])
 
                 pool = []
                 labels = inicial_pool[:, -1]
