@@ -77,6 +77,7 @@ def handshake2(dataset, data_labeled, d_treino, l_train, stream, l_stream, num_c
 
     data_labeled = []
     poolsize = len(inicial_pool)
+    data_gmm = []
     count = 0
     updt = 0
     # print(poolsize)
@@ -102,6 +103,7 @@ def handshake2(dataset, data_labeled, d_treino, l_train, stream, l_stream, num_c
         temp = np.column_stack((x, predicted))
 
         data_labeled.append(predicted)
+        data_gmm.append(cl)
         pool = np.vstack([pool, temp])
 
         count += 1
@@ -184,4 +186,4 @@ def handshake2(dataset, data_labeled, d_treino, l_train, stream, l_stream, num_c
 
                 updt+= 1
 
-    return data_labeled, updt
+    return data_labeled, updt, data_gmm
