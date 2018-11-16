@@ -93,7 +93,7 @@ def main():
 
     # base = '/home/localuser/Documentos/procopio/tcc/datasets/'
     # base = '/home/procopio/Documents/tcc/datasets/'
-    base = '/home/god/Documents/ccomp/tcc/datasets/'
+    base = '/home/god/Documentos/tcc/datasets/'
 #     list = ['1CSurr.txt', '2CDT.txt', '2CHT.txt']# 'NOAA.txt', 'elec.txt', 'keystroke.txt']
     # list = ['keystroke.txt']
     list = ['1CSurr.txt']
@@ -159,8 +159,8 @@ def main():
                 tempo = end - start
                 # name = list[int(key)]
 
-                acc_percent, f1_percent, mcc_percent = metrics.makeBatches(l_stream, predicted, len(stream))
-                score, f1, mcc, std = metrics.metrics(acc_percent, l_stream, predicted, f1_type = 'macro')
+                acc_percent, f1_percent, mcc_percent = metrics.makeBatches(l_stream, predicted, len(stream), step)
+                score, f1, mcc, std = metrics.metrics(acc_percent, l_stream, predicted, step, f1_type = 'macro')
 
                 # acc_percentScargc, f1_percentS, mcc_percentS = metrics.makeBatches(l_stream, predictedS, len(stream))
                 # scoreS, f1S, mccS, stdS = metrics.metrics(acc_percentScargc, l_stream, predictedS, f1_type = 'macro')
@@ -185,10 +185,11 @@ def main():
                 # plots.plotAcc(acc_percent, 100, 'keystroke')
                 # plots.plotAccuracyCurves(matrixAcc, listMethod)
 
-                print(predicted[0:10])
                 print(predicted_[0:10])
+                pred = np.array(predicted_)
+                pred = pred + 1 
 
-                # plots.plotPerBatches(stream, predicted_, l_stream, len(stream), step)
+                plots.plotPerBatches(stream, pred, l_stream, len(stream), step)
 
 
 if __name__ == '__main__':
