@@ -8,7 +8,7 @@ from sklearn.neighbors import KNeighborsClassifier
 
 
 
-def scargc_1NN(dataset, data_labeled, d_treino, l_train, stream, l_stream, pool_size, num_clusters, n_features):
+def scargc_1NN(dataset, data_labeled, d_treino, l_train, stream, l_stream, pool_size, num_clusters, n_features, k):
 
     classes = set(data_labeled)
     num_class = len(classes)
@@ -41,7 +41,7 @@ def scargc_1NN(dataset, data_labeled, d_treino, l_train, stream, l_stream, pool_
         centroid_past = k.cluster_centers_
         centroid_past = np.asarray(centroid_past)
 
-        KNN = KNeighborsClassifier(n_neighbors=1)
+        KNN = KNeighborsClassifier(n_neighbors=k)
         KNN.fit(d_treino[:,:-1], l_train)
         centroid_past_lab = []
         centroid_past_lab = KNN.predict(np.reshape(centroid_past[0,:], (-1, (n_features - 1))))
@@ -67,14 +67,14 @@ def scargc_1NN(dataset, data_labeled, d_treino, l_train, stream, l_stream, pool_
     data_labels = []
     knn_labels = []
     # data_acc = []
-
+    KNN = KNeighborsClassifier(n_neighbors=k)
+    KNN.fit(d_treino, l_train)
 
     for i in range(0, len(stream)):
         x = stream[i,:]
         y = l_stream[i]
 
-        KNN = KNeighborsClassifier(n_neighbors=1)
-        KNN.fit(d_treino, l_train)
+
 
         x = np.reshape(x, (-1, (n_features - 1)))
 
@@ -107,10 +107,11 @@ def scargc_1NN(dataset, data_labeled, d_treino, l_train, stream, l_stream, pool_
             # c_old = np.delete(centroid_past, np.s_[n_features - 1], axis=1)
             kmeans = KMeans(n_clusters=num_clusters, init=centroid_past[-num_clusters:, :-1]).fit(pool[:,0:-1])
             centroid_cur = kmeans.cluster_centers_
+            KNN2 = KNeighborsClassifier(n_neighbors=1)
 
-            KNN.fit(centroid_past[:,:-1], centroid_past[:,-1])
-            clab = KNN.predict(centroid_cur)
-            nearest = KNN.kneighbors(centroid_cur, return_distance=False)
+            KNN2.fit(centroid_past[:,:-1], centroid_past[:,-1])
+            clab = KNN2.predict(centroid_cur)
+            nearest = KNN2.kneighbors(centroid_cur, return_distance=False)
 
             intermed = []
             centroid_label = []
@@ -131,8 +132,8 @@ def scargc_1NN(dataset, data_labeled, d_treino, l_train, stream, l_stream, pool_
             centroid_cur = np.column_stack([centroid_cur, centroid_label])
             centroid_past = intermed
 
-            KNN.fit( np.vstack([centroid_cur[:,:-1], centroid_past[:,:-1]]), np.hstack([centroid_cur[:,-1], centroid_past[:,-1]]) )
-            pred_all = KNN.predict(pool[:,0:-1])
+            KNN2.fit( np.vstack([centroid_cur[:,:-1], centroid_past[:,:-1]]), np.hstack([centroid_cur[:,-1], centroid_past[:,-1]]) )
+            pred_all = KNN2.predict(pool[:,0:-1])
 
             for p in range(0, pool.shape[0]):
                 if p == 0:
@@ -148,6 +149,9 @@ def scargc_1NN(dataset, data_labeled, d_treino, l_train, stream, l_stream, pool_
                 centroid_past = np.vstack([centroid_cur, intermed])
                 d_treino = pool[:, 0:-1]
                 l_train = pool[:, -1]
+                KNN = KNeighborsClassifier(n_neighbors=k)
+                KNN.fit(d_treino, l_train)
+
 
                 updt = updt + 1
 
