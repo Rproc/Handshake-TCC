@@ -5,7 +5,8 @@ import matplotlib.cm as cm
 from source.util import utils
 import matplotlib as mpl
 from source.util import utils as u
-
+from matplotlib.ticker import MaxNLocator
+from collections import namedtuple
 
 
 def plotAcc(data_acc, steps, label):
@@ -72,6 +73,75 @@ def plotTime(listOfTimes, listOfMethods):
     plt.xticks(range(len(listOfTimes)))
     plt.show()
 
+
+def plotSummaryCompare(form, listHandshake, listSCARGC, listOfMethods):
+
+    n_groups = len(listOfMethods)
+
+    # print(n_groups)
+    t_f1 = tuple(listHandshake)
+    t_mcc = tuple(listSCARGC)
+
+    fig, ax = plt.subplots()
+
+    index = np.arange(n_groups)
+    bar_width = 0.35
+    opacity = 1
+    error_config = {'ecolor': '0.3'}
+
+    rects1 = ax.bar(index, t_f1, bar_width,
+                alpha=opacity,
+                error_kw=error_config, label='Handshake')
+
+    rects2 = ax.bar(index + bar_width, t_mcc, bar_width,
+                alpha=opacity,
+                error_kw=error_config, label='SCARGC')
+
+    ax.set_xlabel('Conjunto de Dados')
+    ax.set_ylabel(form)
+    # ax.set_title('Scores by group and gender')
+    ax.set_xticks(index + bar_width / 2)
+    ax.set_xticklabels(('ELEC 2', 'NOAA', 'Keystroke'))
+    ax.legend()
+    # ax.YAxis.grid()
+    # plt.grid()
+    fig.tight_layout()
+    plt.show()
+
+def plotSummary(listf1, listmcc):
+
+    n_groups = len(listf1)
+
+    # print(n_groups)
+    t_f1 = tuple(listf1)
+    t_mcc = tuple(listmcc)
+
+    fig, ax = plt.subplots()
+
+    index = np.arange(n_groups)
+    bar_width = 0.35
+    opacity = 0.4
+    error_config = {'ecolor': '0.3'}
+
+    rects1 = ax.bar(index, t_f1, bar_width,
+                alpha=opacity, color='blue',
+                error_kw=error_config, label='Macro-F1')
+
+    rects2 = ax.bar(index + bar_width, t_mcc, bar_width,
+                alpha=opacity, color='red',
+                error_kw=error_config, label='MCC')
+
+    ax.set_xlabel('Conjunto de Dados')
+    ax.set_ylabel('Scores')
+    # ax.set_title('Scores by group and gender')
+    ax.set_xticks(index + bar_width / 2)
+    ax.set_xticklabels(('ELEC 2', 'NOAA', 'Keystroke'))
+    ax.legend()
+
+    fig.tight_layout()
+    plt.show()
+
+
 def plotAverageAcc(listOfAcc, listOfMethods):
 
     listOfAcc = np.multiply(listOfAcc, 100)
@@ -88,6 +158,28 @@ def plotAverageAcc(listOfAcc, listOfMethods):
     plt.xticks(rotation=90)
     plt.grid()
     plt.show()
+
+def plotSummaryAlone(form, listOfTimes, listOfMethods):
+
+    for l in range(len(listOfTimes)):
+        ax = plt.axes()
+        ax.bar(l, listOfTimes[l], align='center', width=0.4)
+
+    # fig = plt.figure(figsize=(1,1))
+    # plt.title("Tempo de processamento para toda a stream")
+    plt.legend(listOfMethods)
+    if (form == 'F1'):
+        # plt.legend(listOfMethods)
+        plt.ylim(0, 0.9)
+    plt.xlabel("Conjunto de Dados")
+    plt.ylabel(form)
+    plt.xticks(range(len(listOfTimes)), listOfMethods)
+    plt.xticks(rotation=90)
+    plt.xticks(range(len(listOfTimes)))
+    plt.show()
+
+
+
 
 def plotAccuracyCurves(listOfAccuracies, listOfMethods, steps):
 
