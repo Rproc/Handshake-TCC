@@ -69,7 +69,7 @@ def plotTime(listOfTimes, listOfMethods):
     plt.title("Tempo de processamento para toda a stream")
     plt.legend(listOfMethods)
     plt.xlabel("Métodos")
-    plt.ylabel("Tempo de Execução")
+    plt.ylabel("Tempo de Execução (s)")
     plt.xticks(range(len(listOfTimes)))
     plt.show()
 
