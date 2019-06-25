@@ -1,7 +1,7 @@
 # from source import scargc
 from source.util import utils as u
 from source import metrics, plots
-from source import handshake, handshake2, scargc, hs
+from source import scargc, hs
 import sys
 import time
 import os
@@ -92,107 +92,176 @@ def main():
     step = 100
 
     # base = '/home/localuser/Documentos/procopio/ccomp/tcc/datasets/'
-    base = '/home/test/Documentos/Handshake-TCC/datasets'
+    base = '/home/test/Documentos/Handshake-TCC/datasets/'
 
-    # base = '/home/procopio/Documents/tcc/datasets/'
-    # base = '/home/god/Documentos/tcc/datasets/'
-#     list = ['1CSurr.txt', '2CDT.txt', '2CHT.txt']# 'NOAA.txt', 'elec.txt', 'keystroke.txt']
+#   list = ['1CSurr.txt', '2CDT.txt', '2CHT.txt']# 'NOAA.txt', 'elec.txt', 'keystroke.txt']
     # list = ['keystroke.txt']
     list = ['1CSurr.txt']
-    database = {}
 
-    for i in range(0, len(list)):
-        database[i] = base + list[i]
 
     array_ep = [0.05]#, 0.10, 0.15]
     array_p = [10]#,20, 30]
     k = 1
-    # aux = []
 
-    # dic = {}
-    for key, value in database.items():
-        # dic[key] = {}
-        for ep in range(0, len(array_ep)):
-            for p in range(0, len(array_p)):
-                adr = value
-    #             dataset, data_labeled, dataset_train, l_train, stream, l_stream, n_features = u.criar_datasets(5, adr)
-    #
-    #             score, f1, mcc = doTrain(dataset_train, l_train, step, n_features, array_p[p], array_ep[ep], n_components)
-    #
-    #             aux = np.hstack([score, f1, mcc])
-    #             result = np.vstack([result, aux])
-    #
-    #             a = str(array_ep[ep])
-    #             b = str(array_p[p])
-    #             name = a +' / '+ b
-    #             dic[key][name] = aux
-    #
-    # # dic[name] = result
-    #
-    #
-    #
-    # for p_id, p_info in dic.items():
-    #     print('dataset :', p_id)
-    #
-    #     for key in p_info:
-    #         print(key, ':', p_info[key])
+    adr = base + list[0]
 
 
-                dataset, data_labeled, dataset_train, l_train, stream, l_stream, n_features = u.criar_datasets(5, adr)
+    dataset, data_labeled, dataset_train, l_train, stream, l_stream, n_features = u.criar_datasets(5, adr)
 
-                start = time.time()
-                # if key == 0:
-                predicted, updt = scargc.newScargc(dataset, data_labeled, dataset_train, l_train, stream, l_stream, poolsize, clusters, n_features, k)
-                # else:
-                #     n_components = 4
-                #     predicted, updt = hs.handshake2(dataset, data_labeled, dataset_train, l_train, stream, l_stream, n_components, n_features, array_ep[ep], array_p[p])
+    start = time.time()
+    # predicted, updt = scargc.newScargc(dataset, data_labeled, dataset_train, l_train, stream, l_stream, poolsize, clusters, n_features, k)
 
-                end = time.time()
-                mem = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
-                # print('mem', mem)
-                # startScargc = time.time()
-                #
-                # predictedS, updtS = scargc.scargc_1NN(dataset, data_labeled, dataset_train, l_train, stream, l_stream, poolsize, clusters, n_features)
-                #
-                # endScargc = time.time()
-                # memS = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
-                #
-                # tempoS = endScargc - startScargc
-                tempo = end - start
-                # name = list[int(key)]
+    predicted, updt, clustering = hs.handshakePCA(dataset, data_labeled, dataset_train, l_train, stream, l_stream, n_components, n_features, array_ep[0], array_p[0], k)
+    end = time.time()
+    # mem = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
 
-                acc_percent, f1_percent, mcc_percent = metrics.makeBatches(l_stream, predicted, len(stream), step)
-                score, f1, mcc, std = metrics.metrics(acc_percent, l_stream, predicted, step, f1_type = 'macro')
+    tempo = end - start
+    # name = list[int(key)]
 
-                # acc_percentScargc, f1_percentS, mcc_percentS = metrics.makeBatches(l_stream, predictedS, len(stream))
-                # scoreS, f1S, mccS, stdS = metrics.metrics(acc_percentScargc, l_stream, predictedS, f1_type = 'macro')
-                # print(f1_percentS[0])
-                # u.saveLog2(name, array_ep[ep], array_p[p], updt, acc_percent, score, f1, mcc, tempo, mem)
-                # matrixAcc = [acc_percent[0], acc_percentScargc[0]]
-                # matrixF1 = [f1_percent[0], f1_percentS[0]]
+    acc_percent, f1_percent, mcc_percent = metrics.makeBatches(l_stream, predicted, len(stream), step)
+    score, f1, mcc, std = metrics.metrics(acc_percent, l_stream, predicted, step, f1_type = 'macro')
 
-                # print(matrixF1)
-                # listTime = [tempo, tempoS]
-                # listAcc = [score, scoreS]
-                # listMethod = ['Handshake', 'SCARGC']
-                print('memory peak: ', mem)
-                print('Acc: ', score)
-                print('Macro-F1: ', f1)
-                print('MCC: ', mcc)
-                print('Desvio Padrão: ', std)
-                print('Numero de atualizações: ', updt)
-                # plots.plotF1(f1_percent, 100, '1CDT_Handshake')
-                # plots.plotF1(f1_percentS, 100, '1CDT_SCARGC')
+    # acc_percentScargc, f1_percentS, mcc_percentS = metrics.makeBatches(l_stream, predictedS, len(stream))
+    # scoreS, f1S, mccS, stdS = metrics.metrics(acc_percentScargc, l_stream, predictedS, f1_type = 'macro')
+    # print(f1_percentS[0])
+    # u.saveLog2(name, array_ep[ep], array_p[p], updt, acc_percent, score, f1, mcc, tempo, mem)
+    # matrixAcc = [acc_percent[0], acc_percentScargc[0]]
+    # matrixF1 = [f1_percent[0], f1_percentS[0]]
 
-                # plots.plotAcc(acc_percent, 100, 'keystroke')
-                # plots.plotAccuracyCurves(matrixAcc, listMethod)
+    # print(matrixF1)
+    # listTime = [tempo, tempoS]
+    # listAcc = [score, scoreS]
+    # listMethod = ['Handshake', 'SCARGC']
+    print('memory peak: ', mem)
+    print('Acc: ', score)
+    print('Macro-F1: ', f1)
+    print('MCC: ', mcc)
+    print('Desvio Padrão: ', std)
+    print('Numero de atualizações: ', updt)
+    # plots.plotF1(f1_percent, 100, '1CDT_Handshake')
+    # plots.plotF1(f1_percentS, 100, '1CDT_SCARGC')
 
-                # print(predicted_[0:10])
-                # pred = np.array(predicted)
-                # pred = pred + 1
+    # plots.plotAcc(acc_percent, 100, 'keystroke')
+    # plots.plotAccuracyCurves(matrixAcc, listMethod)
 
-                plots.plotPerBatches(stream, predicted, l_stream, len(stream), step)
+    # print(predicted_[0:10])
+    # pred = np.array(predicted)
+    # pred = pred + 1
+
+    # plots.plotPerBatches(stream, predicted, l_stream, len(stream), step)
 
 
 if __name__ == '__main__':
-	# main()
+	main()
+
+
+# OLD main
+#
+#
+#
+#     poolsize = 150
+#     clusters = 2
+#     n_components = 2
+#     step = 100
+#
+#     # base = '/home/localuser/Documentos/procopio/ccomp/tcc/datasets/'
+#     base = '/home/test/Documentos/Handshake-TCC/datasets'
+#
+#     # base = '/home/procopio/Documents/tcc/datasets/'
+#     # base = '/home/god/Documentos/tcc/datasets/'
+# #     list = ['1CSurr.txt', '2CDT.txt', '2CHT.txt']# 'NOAA.txt', 'elec.txt', 'keystroke.txt']
+#     # list = ['keystroke.txt']
+#     list = ['1CSurr.txt']
+#     database = {}
+#
+#     for i in range(0, len(list)):
+#         database[i] = base + list[i]
+#
+#     array_ep = [0.05]#, 0.10, 0.15]
+#     array_p = [10]#,20, 30]
+#     k = 1
+#     # aux = []
+#
+#     # dic = {}
+#     for key, value in database.items():
+#         # dic[key] = {}
+#         for ep in range(0, len(array_ep)):
+#             for p in range(0, len(array_p)):
+#                 adr = value
+#     #             dataset, data_labeled, dataset_train, l_train, stream, l_stream, n_features = u.criar_datasets(5, adr)
+#     #
+#     #             score, f1, mcc = doTrain(dataset_train, l_train, step, n_features, array_p[p], array_ep[ep], n_components)
+#     #
+#     #             aux = np.hstack([score, f1, mcc])
+#     #             result = np.vstack([result, aux])
+#     #
+#     #             a = str(array_ep[ep])
+#     #             b = str(array_p[p])
+#     #             name = a +' / '+ b
+#     #             dic[key][name] = aux
+#     #
+#     # # dic[name] = result
+#     #
+#     #
+#     #
+#     # for p_id, p_info in dic.items():
+#     #     print('dataset :', p_id)
+#     #
+#     #     for key in p_info:
+#     #         print(key, ':', p_info[key])
+#
+#
+#                 dataset, data_labeled, dataset_train, l_train, stream, l_stream, n_features = u.criar_datasets(5, adr)
+#
+#                 start = time.time()
+#                 # if key == 0:
+#                 predicted, updt = scargc.newScargc(dataset, data_labeled, dataset_train, l_train, stream, l_stream, poolsize, clusters, n_features, k)
+#                 # else:
+#                 #     n_components = 4
+#                 #     predicted, updt = hs.handshake2(dataset, data_labeled, dataset_train, l_train, stream, l_stream, n_components, n_features, array_ep[ep], array_p[p])
+#
+#                 end = time.time()
+#                 mem = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+#                 # print('mem', mem)
+#                 # startScargc = time.time()
+#                 #
+#                 # predictedS, updtS = scargc.scargc_1NN(dataset, data_labeled, dataset_train, l_train, stream, l_stream, poolsize, clusters, n_features)
+#                 #
+#                 # endScargc = time.time()
+#                 # memS = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+#                 #
+#                 # tempoS = endScargc - startScargc
+#                 tempo = end - start
+#                 # name = list[int(key)]
+#
+#                 acc_percent, f1_percent, mcc_percent = metrics.makeBatches(l_stream, predicted, len(stream), step)
+#                 score, f1, mcc, std = metrics.metrics(acc_percent, l_stream, predicted, step, f1_type = 'macro')
+#
+#                 # acc_percentScargc, f1_percentS, mcc_percentS = metrics.makeBatches(l_stream, predictedS, len(stream))
+#                 # scoreS, f1S, mccS, stdS = metrics.metrics(acc_percentScargc, l_stream, predictedS, f1_type = 'macro')
+#                 # print(f1_percentS[0])
+#                 # u.saveLog2(name, array_ep[ep], array_p[p], updt, acc_percent, score, f1, mcc, tempo, mem)
+#                 # matrixAcc = [acc_percent[0], acc_percentScargc[0]]
+#                 # matrixF1 = [f1_percent[0], f1_percentS[0]]
+#
+#                 # print(matrixF1)
+#                 # listTime = [tempo, tempoS]
+#                 # listAcc = [score, scoreS]
+#                 # listMethod = ['Handshake', 'SCARGC']
+#                 print('memory peak: ', mem)
+#                 print('Acc: ', score)
+#                 print('Macro-F1: ', f1)
+#                 print('MCC: ', mcc)
+#                 print('Desvio Padrão: ', std)
+#                 print('Numero de atualizações: ', updt)
+#                 # plots.plotF1(f1_percent, 100, '1CDT_Handshake')
+#                 # plots.plotF1(f1_percentS, 100, '1CDT_SCARGC')
+#
+#                 # plots.plotAcc(acc_percent, 100, 'keystroke')
+#                 # plots.plotAccuracyCurves(matrixAcc, listMethod)
+#
+#                 # print(predicted_[0:10])
+#                 # pred = np.array(predicted)
+#                 # pred = pred + 1
+#
+#                 plots.plotPerBatches(stream, predicted, l_stream, len(stream), step)
