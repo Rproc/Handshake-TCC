@@ -86,14 +86,16 @@ def doTrain(data, label, step, n_features, percent, epsilon, n_components):
 
 def main():
 
-    poolsize = 300
+    poolsize = 150
     clusters = 2
     n_components = 2
     step = 100
 
-    # base = '/home/localuser/Documentos/procopio/tcc/datasets/'
+    # base = '/home/localuser/Documentos/procopio/ccomp/tcc/datasets/'
+    base = '/home/test/Documentos/Handshake-TCC/datasets'
+
     # base = '/home/procopio/Documents/tcc/datasets/'
-    base = '/home/god/Documentos/tcc/datasets/'
+    # base = '/home/god/Documentos/tcc/datasets/'
 #     list = ['1CSurr.txt', '2CDT.txt', '2CHT.txt']# 'NOAA.txt', 'elec.txt', 'keystroke.txt']
     # list = ['keystroke.txt']
     list = ['1CSurr.txt']
@@ -140,7 +142,7 @@ def main():
 
                 start = time.time()
                 # if key == 0:
-                predicted, updt, predicted_ = hs.handshake2(dataset, data_labeled, dataset_train, l_train, stream, l_stream, n_components, n_features, array_ep[ep], array_p[p], k)
+                predicted, updt = scargc.newScargc(dataset, data_labeled, dataset_train, l_train, stream, l_stream, poolsize, clusters, n_features, k)
                 # else:
                 #     n_components = 4
                 #     predicted, updt = hs.handshake2(dataset, data_labeled, dataset_train, l_train, stream, l_stream, n_components, n_features, array_ep[ep], array_p[p])
@@ -185,12 +187,12 @@ def main():
                 # plots.plotAcc(acc_percent, 100, 'keystroke')
                 # plots.plotAccuracyCurves(matrixAcc, listMethod)
 
-                print(predicted_[0:10])
-                pred = np.array(predicted_)
-                pred = pred + 1 
+                # print(predicted_[0:10])
+                # pred = np.array(predicted)
+                # pred = pred + 1
 
-                plots.plotPerBatches(stream, pred, l_stream, len(stream), step)
+                plots.plotPerBatches(stream, predicted, l_stream, len(stream), step)
 
 
 if __name__ == '__main__':
-	main()
+	# main()
