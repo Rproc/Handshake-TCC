@@ -44,5 +44,6 @@ def metrics(data_acc, l_stream, predicted, step, f1_type = 'binary'):
     f1 = f1_score(l_stream, predicted, average = f1_type)
     mcc = matthews_corrcoef(l_stream, predicted)
     std = np.std(data_acc)
+#     mcc = 0
 
     return score, f1, mcc, std
