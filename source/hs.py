@@ -6,6 +6,7 @@ from sklearn.mixture import GaussianMixture
 from sklearn.neighbors import KNeighborsClassifier
 # from source import util
 from sklearn.decomposition import PCA
+from sklearn.decomposition import KernelPCA
 
 import sys
 
@@ -200,11 +201,11 @@ def handshakePCA(dataset, data_labeled, d_treino, l_train, stream, l_stream, num
 
     percent_pool = int( len(d_treino)/100 * percent_init )
 
-    pca = PCA(.95)
+    pca = KernelPCA(n_components=2, kernel='rbf')
     pca.fit(d_treino)
     d_treino_pca = pca.transform(d_treino)
 
-    pcaComponents = pca.n_components_
+    pcaComponents = 2
 
     # print(d_treino_pca[0:2])
     #
@@ -300,8 +301,8 @@ def handshakePCA(dataset, data_labeled, d_treino, l_train, stream, l_stream, num
 
             pca.fit(pool[:,:-1])
             poolPCA = pca.transform(pool[:,:-1])
-            pcaComponents = pca.n_components_
-            
+            # pcaComponents = pca.n_components_
+
             gmm = GaussianMixture(n_components=num_components).fit(poolPCA[:,:])
             pred_all = gmm.predict(np.reshape(poolPCA[:,:], (-1, (pcaComponents))))
 

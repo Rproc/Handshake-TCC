@@ -96,11 +96,11 @@ def main():
 
 #   list = ['1CSurr.txt', '2CDT.txt', '2CHT.txt']# 'NOAA.txt', 'elec.txt', 'keystroke.txt']
     # list = ['keystroke.txt']
-    list = ['1CSurr.txt']
+    list = ['NOAA.txt']
 
 
-    array_ep = [0.05]#, 0.10, 0.15]
-    array_p = [10]#,20, 30]
+    array_ep = [0.1]#, 0.10, 0.15]
+    array_p = [30]#,20, 30]
     k = 1
 
     adr = base + list[0]
