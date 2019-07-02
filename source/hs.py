@@ -201,7 +201,7 @@ def handshakePCA(dataset, data_labeled, d_treino, l_train, stream, l_stream, num
 
     percent_pool = int( len(d_treino)/100 * percent_init )
 
-    pca = KernelPCA(n_components=2, kernel='rbf')
+    pca = KernelPCA(n_components=2, kernel='rbf', gamma=10.0)
     pca.fit(d_treino)
     d_treino_pca = pca.transform(d_treino)
 
