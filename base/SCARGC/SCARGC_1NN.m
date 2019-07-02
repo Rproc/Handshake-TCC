@@ -4,7 +4,7 @@
 %data
 %example: [vet_bin_acc, acc_final, ~] = SCARGC_1NN('MC-2C-2D.txt', 50, 300, 2)
 %To see the results over time: plot100Steps(vet_bin_acc, '-r')
-function [vet_bin_acc, acc_final, elapsedTime] = SCARGC_1NN(dataset, numini, max_pool_length, nK)
+function [predicted_label, vet_bin_acc, acc_final, elapsedTime] = SCARGC_1NN(dataset, numini, max_pool_length, nK)
     
     %save time
     tic;
@@ -159,14 +159,14 @@ function [vet_bin_acc, acc_final, elapsedTime] = SCARGC_1NN(dataset, numini, max
 % % %            refreshdata
 % % %            clf
 % % %            
-           groundTruth = [];
+%            groundTruth = [];
            pool_data = [];
            
        end
        
        
-       %update vet_bin_acc for calculate the accuracy measure
-       if predicted_label == actual_label;
+       %update vet_bin_acc for calculate th accuracy measure
+       if predicted_label == actual_label
             vet_bin_acc = [vet_bin_acc, 1];
        else
             vet_bin_acc = [vet_bin_acc, 0];
