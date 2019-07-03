@@ -266,7 +266,7 @@ def plotPerBatches(stream, predicted, actualLabel, size_stream, step):
             ax.set_xlabel('x')
             ax.set_ylabel('y')
             ax2.legend(handles2, classLabels)
-            ax2.set_title('Rótulos do Handshake')
+            ax2.set_title('Rótulos do SCARGC')
             ax2.set_xlabel('x')
             ax2.set_ylabel('y')
             title = "Distribuição dos dados. Step {}".format(i)

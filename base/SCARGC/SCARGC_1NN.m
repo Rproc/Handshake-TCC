@@ -4,27 +4,27 @@
 %data
 %example: [vet_bin_acc, acc_final, ~] = SCARGC_1NN('MC-2C-2D.txt', 50, 300, 2)
 %To see the results over time: plot100Steps(vet_bin_acc, '-r')
-function [predicted_label, vet_bin_acc, acc_final, elapsedTime] = SCARGC_1NN(dataset, numini, max_pool_length, nK)
-    
+function [pred, vet_bin_acc, acc_final, elapsedTime] = SCARGC_1NN(dataset, numini, max_pool_length, nK)
+
     %save time
     tic;
     data = load(dataset);
-   
+
     initial_labeled_DATA = data(1:numini,1:end-1);
     initial_labeled_LABELS = data(1:numini,end);
-    
+
     %in the beginning, labeled data are equal initially labeled data
     labeled_DATA = initial_labeled_DATA;
     labeled_LABELS = initial_labeled_LABELS;
-  
-    
+
+
     %unlabeled data used for the test phase
     unlabeled_DATA = data(numini+1:end, 1:end-1);
     unlabeled_LABELS = data(numini+1:end,end);
-    
+
     classes = unique(labeled_LABELS);
     nClass = length(classes);
-    
+
     centroids_ant = [];
     tmp_cent = [];
     %first centroids
@@ -42,33 +42,35 @@ function [predicted_label, vet_bin_acc, acc_final, elapsedTime] = SCARGC_1NN(dat
         %associate labels for first centroids
         centroids_ant_lab = [];
         for core = 1:size(centroids_ant,1)
-           [pred_lab,~] = knn_classify(initial_labeled_DATA, initial_labeled_LABELS, centroids_ant(core,:)); 
+           [pred_lab,~] = knn_classify(initial_labeled_DATA, initial_labeled_LABELS, centroids_ant(core,:));
            centroids_ant_lab = [centroids_ant_lab; pred_lab];
         end
         centroids_ant = [centroids_ant, centroids_ant_lab];
     end
-    
+
     cluster_labels = [];
     pool_data = [];
     vet_bin_acc = [];
 
     updt=0;
-    
+    pred = [];
+
     for i = 1:length(unlabeled_LABELS)
        test_instance = unlabeled_DATA(i,:);
        actual_label = unlabeled_LABELS(i);
-       
+
        %classify each stream's instance with 1NN classifier
        [predicted_label, ~, ~] = knn_classify(labeled_DATA, labeled_LABELS, test_instance);
-  
+
        pool_data = [pool_data; test_instance, predicted_label];
-       
+
+       pred(i) = predicted_label;
        
        if (size(pool_data,1) == max_pool_length)
            %FOR NOAA DATASET, COMMENT NEXT LINE
-           [~, centroids_cur] = kmeans(pool_data(:,1:end-1), nK, 'start', centroids_ant(end-nK+1:end,1:end-1));        
+           [~, centroids_cur] = kmeans(pool_data(:,1:end-1), nK, 'start', centroids_ant(end-nK+1:end,1:end-1));
            %FOR NOAA DATASET, REMOVE THE COMMENT OF THE NEXT LINE
-           %[~, centroids_cur] = kmeans(pool_data(:,1:end-1), nK);        
+           %[~, centroids_cur] = kmeans(pool_data(:,1:end-1), nK);
            intermed = [];
            cent_labels = [];
            for p = 1:size(centroids_cur,1)
@@ -78,8 +80,8 @@ function [predicted_label, vet_bin_acc, acc_final, elapsedTime] = SCARGC_1NN(dat
                cent_labels = [cent_labels; clab];
            end
            centroids_cur = [centroids_cur, cent_labels];
-           
-           
+
+
            %checks if any label is not associated with some cluster
            labelsIntermed = unique(intermed(:,end));
            if isequal(labelsIntermed, classes) == 0
@@ -87,10 +89,10 @@ function [predicted_label, vet_bin_acc, acc_final, elapsedTime] = SCARGC_1NN(dat
                [~,posMax] = max(atribuicoes(:,2));
                [~,posMin] = min(atribuicoes(:,2));
                labelFault = atribuicoes(posMin,1);
-               intermed(posMin,end) = labelFault;               
+               intermed(posMin,end) = labelFault;
            end
 
-           
+
            centroids_ant = intermed;
            new_pool = [];
            for p = 1:size(pool_data,1)
@@ -104,20 +106,20 @@ function [predicted_label, vet_bin_acc, acc_final, elapsedTime] = SCARGC_1NN(dat
 
                labeled_DATA = pool_data(:,1:end-1);
                labeled_LABELS = pool_data(:,end);
-               
+
                %number of updates
                %updt = updt+1
- 
+
            end
-      
+
 
 % % %            %plot current model by clustering
 % % %            opt = ['b^', 'rv', 'ks', 'm*', 'g+'];
-% % %            
+% % %
 % % %            for k = 1:nClass
 % % %               %index of plot option
 % % %               ind = [1,3,5,7,9];
-% % %               
+% % %
 % % %               idx = find(labeled_LABELS == classes(k));
 % % %               idxCA = find(cent_ant_bkp(:,end) == classes(k));
 % % %               idxCC = find(centroids_cur(:,end) == classes(k));
@@ -125,7 +127,7 @@ function [predicted_label, vet_bin_acc, acc_final, elapsedTime] = SCARGC_1NN(dat
 % % %               plot(labeled_DATA(idx,1), labeled_DATA(idx,2), opt(ind(k):ind(k)+1)); hold on;
 % % %               plot(cent_ant_bkp(idxCA,1), cent_ant_bkp(idxCA,2), [opt(ind(k)), 'o'], 'MarkerSize', 10, 'LineWidth', 3); hold on;
 % % %               plot(centroids_cur(idxCC,1), centroids_cur(idxCC,2), opt(ind(k):ind(k)+1), 'MarkerSize', 10, 'LineWidth', 3); hold on;
-% % %               
+% % %
 % % %               title(['Current Model ', num2str(i/max_pool_length)]);
 % % % %               axis([-1.5 1.5 -1.5 1.5]) %Hyperplane
 % % % %               axis([-5 30 -10 30]) %T2D
@@ -136,7 +138,7 @@ function [predicted_label, vet_bin_acc, acc_final, elapsedTime] = SCARGC_1NN(dat
 % % %               xlabel('Feature 1');
 % % %               ylabel('Feature 2');
 % % %               hold on;
-% % % 
+% % %
 % % %               idxGT = find(groundTruth == classes(k));
 % % %               subplot(1,2,2);
 % % %               plot(pool_data(idxGT,1), pool_data(idxGT,2), opt(ind(k):ind(k)+1));
@@ -149,33 +151,31 @@ function [predicted_label, vet_bin_acc, acc_final, elapsedTime] = SCARGC_1NN(dat
 % % % %               axis([-2 3 -1 1]) %GEARS 2C 2D
 % % %               xlabel('Feature 1');
 % % %               ylabel('Feature 2');
-% % %               hold on; 
+% % %               hold on;
 % % %            end
 %            if i/max_pool_length > 329
 %                keyboard
 %            end
-% % % 
+% % %
 % % %            drawnow
 % % %            refreshdata
 % % %            clf
-% % %            
+% % %
 %            groundTruth = [];
            pool_data = [];
-           
+
        end
-       
-       
+
+
        %update vet_bin_acc for calculate th accuracy measure
        if predicted_label == actual_label
             vet_bin_acc = [vet_bin_acc, 1];
        else
             vet_bin_acc = [vet_bin_acc, 0];
        end
-        
+
     end
 
     acc_final = (sum(vet_bin_acc)/length(unlabeled_DATA))*100;
     elapsedTime = toc;
 end
-
-    
