@@ -105,9 +105,13 @@ def main():
 
     adr = base + list[0]
 
+    dataset, data_labeled, dataset_train, l_train, stream, l_stream, n_features = u.criar_datasets(5, adr, 0)
 
-    dataset, data_labeled, dataset_train, l_train, stream, l_stream, n_features = u.criar_datasets(5, adr)
+    print(dataset[0,:])
 
+    dataset, data_labeled, dataset_train, l_train, stream, l_stream, n_features = u.criar_datasets(5, adr, 1)
+
+    print(dataset[0, :])
     start = time.time()
     # predicted, updt = scargc.newScargc(dataset, data_labeled, dataset_train, l_train, stream, l_stream, poolsize, clusters, n_features, k)
 

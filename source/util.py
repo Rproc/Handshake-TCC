@@ -4,6 +4,7 @@ import math
 import numpy as np
 import os.path
 from sklearn.decomposition import PCA
+from scipy.stats import zscore
 # from source import handshake2 as hs2
 
 class utils:
@@ -12,7 +13,7 @@ class utils:
         print('oi')
 
 
-    def criar_datasets(porcentagem_treino, path):
+    def criar_datasets(porcentagem_treino, path, with_Zscore):
         # d_treino = np.zeros((n_elem, n_features), dtype=np.float)
         # indices_teste = []
         # i_arranjo = 0
@@ -59,6 +60,12 @@ class utils:
         data_labeled = dataset[:, (n_t -1)]
         # print(d_treino[0])
         # print(l_train[0])
+
+        if with_Zscore == 1:
+            dataset[:, :-1] = zscore(dataset[:, :-1], axis=0)
+            d_treino[:, :-1] = zscore(d_treino[:, :-1], axis=0)
+            d_stream[:, :-1] = zscore(d_stream[:, :-1], axis=0)
+
         return dataset, data_labeled, d_treino, l_train, d_stream, l_stream, n_features
 
 
