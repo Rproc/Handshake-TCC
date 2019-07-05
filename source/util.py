@@ -23,7 +23,7 @@ class utils:
         linhas = texto.readlines()
         linhas = list(map(str.strip,linhas))
         n_features = len(linhas[0].split(','))
-        withLabel =	len(linhas)
+        withLabel = len(linhas)
         limite_treino = math.floor(withLabel * (porcentagem_treino/100))
 
 

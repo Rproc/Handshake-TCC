@@ -201,38 +201,38 @@ def handshakePCA(dataset, data_labeled, d_treino, l_train, stream, l_stream, num
 
     percent_pool = int( len(d_treino)/100 * percent_init )
     
-    n_features = n_features - 1
+#     n_features = n_features - 1
 
-    if with_Pca == 1:
-        pca = KernelPCA(n_components=2, kernel='rbf', gamma=10.0)
-        pca.fit(d_treino)
-        d_treino = pca.transform(d_treino)
+    pca = KernelPCA(n_components=2, kernel='rbf', gamma=1.0)
+    pca.fit(d_treino)
+    d_treinoPCA = pca.transform(d_treino)
 
-        n_features = 2
+    pcaComponents = 2
 
     # print(d_treino[0:2])
     #
     # print(type(pcaComponents), pcaComponents)
     # print(type(n_features), n_features)
-    gmm = GaussianMixture(n_components=num_components).fit(d_treino)
+    gmm = GaussianMixture(n_components=num_components).fit(d_treinoPCA)
 
+#     print(d_treino[0])
     KNN = KNeighborsClassifier(n_neighbors=k)
     KNN.fit(d_treino, l_train)
 
-    pred = gmm.predict(np.reshape(d_treino[0,:], (-1, (n_features))))
+    pred = gmm.predict(np.reshape(d_treinoPCA[0,:], (-1, (pcaComponents))))
     # print(pred_s)
     cl = int(pred)
     # print(type(cl))
-    pred_proba = gmm.predict_proba(np.reshape(d_treino[0,:], (-1, (n_features))))
+    pred_proba = gmm.predict_proba(np.reshape(d_treinoPCA[0,:], (-1, (pcaComponents))))
     aux = np.hstack([d_treino[0, :], cl, pred_proba[0][cl], l_train[0]] )
     inicial_pool = aux
     # print(aux)
 
     for i in range(1, len(d_treino)):
 
-        pred = gmm.predict(np.reshape(d_treino[i,:], (-1, (n_features))))
+        pred = gmm.predict(np.reshape(d_treinoPCA[i,:], (-1, (pcaComponents))))
         cl = int(pred)
-        pred_proba = gmm.predict_proba(np.reshape(d_treino[i,:], (-1, (n_features))))
+        pred_proba = gmm.predict_proba(np.reshape(d_treinoPCA[i,:], (-1, (pcaComponents))))
         aux = np.hstack([d_treino[i, :], cl, pred_proba[0][cl], l_train[i]] )
 
         inicial_pool = np.vstack([inicial_pool, aux])
@@ -274,10 +274,10 @@ def handshakePCA(dataset, data_labeled, d_treino, l_train, stream, l_stream, num
     # print(poolsize)
     for i in range(0, len(stream)):
 
+    
         x = stream[i,:-1]
         y = l_stream[i]
-
-        x = np.reshape(x, (-1, (n_features)))
+        x = np.reshape(x, (-1, (n_features -1)))
 
         predicted = KNN.predict(x)
         index_s = (int(predicted) - 1)
@@ -287,7 +287,7 @@ def handshakePCA(dataset, data_labeled, d_treino, l_train, stream, l_stream, num
         pcaX = pca.transform(x)
         pred = gmm.predict(pcaX)
         cl = int(pred)
-        pred_proba = gmm.predict_proba(np.reshape(pcaX, (-1, (n_features))))
+        pred_proba = gmm.predict_proba(np.reshape(pcaX, (-1, (pcaComponents))))
         trust_u = pred_proba[0][cl]
 
         delta = abs(trust_u - trust_s)
@@ -296,18 +296,20 @@ def handshakePCA(dataset, data_labeled, d_treino, l_train, stream, l_stream, num
 
         data_labeled.append(predicted)
         data_gmm.append(cl)
+
         pool = np.vstack([pool, temp])
 
         count += 1
 
         if delta >= episilon:
+            
 
             pca.fit(pool[:,:-1])
             poolPCA = pca.transform(pool[:,:-1])
             # pcaComponents = pca.n_components_
 
             gmm = GaussianMixture(n_components=num_components).fit(poolPCA[:,:])
-            pred_all = gmm.predict(np.reshape(poolPCA[:,:], (-1, (n_features))))
+            pred_all = gmm.predict(np.reshape(poolPCA[:,:], (-1, (pcaComponents))))
 
             init_pool = np.asarray(inicial_pool[:, -3], dtype=int)
             new_labels = pred_all[0:len(inicial_pool)]
@@ -318,7 +320,7 @@ def handshakePCA(dataset, data_labeled, d_treino, l_train, stream, l_stream, num
 
                 KNN.fit(pool[:, 0:(n_features - 1)], pool[:, -1])
                 # pred_proba = gmm.predict_proba(pool[:, :(n_features - 1)])
-                pred_proba = gmm.predict_proba(np.reshape(poolPCA[0,:(n_features)], (-1, (n_features))))
+                pred_proba = gmm.predict_proba(np.reshape(poolPCA[0,:(pcaComponents)], (-1, (pcaComponents))))
 
                 new_pool = []
 
@@ -328,7 +330,7 @@ def handshakePCA(dataset, data_labeled, d_treino, l_train, stream, l_stream, num
 
                 for k in range(1, len(pool)):
                     cl = int(pred_all[k])
-                    pred_proba = gmm.predict_proba(np.reshape(poolPCA[k,:(n_features)], (-1, (n_features))))
+                    pred_proba = gmm.predict_proba(np.reshape(poolPCA[k,:(pcaComponents)], (-1, (pcaComponents))))
                     aux = np.hstack( [pool[k, 0:(n_features -1 )], cl, pred_proba[0][cl], pool[k, -1]] )
                     new_pool = np.vstack([new_pool, aux])
 
