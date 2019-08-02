@@ -4,7 +4,7 @@
 %data
 %example: [vet_bin_acc, acc_final, ~] = SCARGC_1NN('MC-2C-2D.txt', 50, 300, 2)
 %To see the results over time: plot100Steps(vet_bin_acc, '-r')
-function [pred, vet_bin_acc, acc_final, elapsedTime] = SCARGC_1NN(dataset, numini, max_pool_length, nK)
+function [pred, vet_bin_acc, acc_final, elapsedTime] = SCARGC_1NN(dataset, numini, max_pool_length, nK, k)
 
     %save time
     tic;
@@ -13,6 +13,8 @@ function [pred, vet_bin_acc, acc_final, elapsedTime] = SCARGC_1NN(dataset, numin
     
 
     initial_labeled_DATA = data(1:numini,1:end-1);
+    kpca = KernelPca(initial_labeled_DATA, 'gaussian', 'gamma', k, 'AutoScale', true);
+    initial_labeled_DATA = project(kpca, initial_labeled_DATA, 2);
     initial_labeled_LABELS = data(1:numini,end);
 
     %in the beginning, labeled data are equal initially labeled data
@@ -21,7 +23,8 @@ function [pred, vet_bin_acc, acc_final, elapsedTime] = SCARGC_1NN(dataset, numin
 
 
     %unlabeled data used for the test phase
-    unlabeled_DATA = data(numini+1:end, 1:end-1);
+    %unlabeled_DATA = data(numini+1:end, 1:end-1);
+    unlabeled_DATA = project(kpca, data(numini+1:end, 1:end-1), 2);
     unlabeled_LABELS = data(numini+1:end,end);
 
     classes = unique(labeled_LABELS);

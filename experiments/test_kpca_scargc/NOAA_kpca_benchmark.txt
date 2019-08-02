@@ -1,0 +1,16 @@
+knn: 2, gamma: 10.00, gamma: 68.51959
+
+knn: 4, gamma: 10.00, gamma: 68.51380
+
+knn: 6, gamma: 10.00, gamma: 68.51380
+
+knn: 8, gamma: 1.50, gamma: 68.57176
+
+knn: 10, gamma: 2.50, gamma: 68.51959
+
+knn: 15, gamma: 1.50, gamma: 68.52539
+
+knn: 25, gamma: 2.00, gamma: 68.56017
+
+knn: 50, gamma: 10.00, gamma: 68.49641
+
